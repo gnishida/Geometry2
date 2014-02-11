@@ -14,4 +14,74 @@
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
   </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="acp.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="arrange.C">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="circle.C">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="hull.C">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="hullplot.C">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="mindisk.C">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="plot.C">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="point.C">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ps2-nishida.C">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="triangulate.C">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="acp.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="arrange.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="circle.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="hull.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="mindisk.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="object.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="plot.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="point.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="triangulate.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="qd\qd_config.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="qd\qd_inline.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="pv.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+  </ItemGroup>
 </Project>
