@@ -102,6 +102,7 @@ void Edge::intersects (Edge *e, Points &points)
   PV2 intersection1 = circle->getO() + dir / d * a + normal->getP() / d * h;
   PV2 intersection2 = circle->getO() + dir / d * a - normal->getP() / d * h;
 
+  /*
   std::cout << "   intersection1: " << intersection1.getX().mid() << "," << intersection1.getY().mid() << std::endl;
   std::cout << "   intersection2: " << intersection2.getX().mid() << "," << intersection2.getY().mid() << std::endl;
 
@@ -182,6 +183,7 @@ void Edge::intersects (Edge *e, Points &points)
 	  intersected2 = false;
 	}
   }
+  */
 
   //std::cout << "   intersected1: " << intersected1 << std::endl;
   //std::cout << "   intersected2: " << intersected2 << std::endl;
