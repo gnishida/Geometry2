@@ -69,6 +69,19 @@ class Epair {
 
 typedef set<Epair> EpairSet;
 
+class CirclePair {
+ public:
+  CirclePair (Point *c1, Parameter &r1, Point *c2, Parameter &r2) : c1(c1), r1(r1), c2(c2), r2(r2) {}
+  bool operator< (const CirclePair &p) const {
+	return c1 < c2 || c1 == c2 && r1 < r2;
+  }
+
+  Point *c1, *c2;
+  Parameter r1, r2;
+};
+
+typedef set<CirclePair> CirclePairSet;
+
 class Face {
  public:
   Face () : wna(-1), wnb(-1) {}
@@ -144,7 +157,7 @@ class Arrangement {
   void remove (Edge *e, Sweep &sweep, Events &heap, EpairSet &eset) const;
   void swap (Edge *e, Edge *f, Point *p, Sweep &sweep, 
 	     Events &heap, EpairSet &eset);
-  void check (Edge *e, Edge *f, Events &heap, EpairSet &eset) const;
+  void check (Edge *e, Edge *f, Events &heap, CirclePairSet &eset) const;
   void split (Edge *e, Edge *f, Point *p);
   void formFaces ();
   void addBoundary (Edge *e, Face *f) const;
