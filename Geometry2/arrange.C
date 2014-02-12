@@ -73,6 +73,10 @@ void Edge::intersects (Edge *e, Points &points)
 {
   bool intersected1 = true;
   bool intersected2 = true;
+  bool withinXrange1 = true;
+  bool withinXrange2 = true;
+  bool withinYrange1 = true;
+  bool withinYrange2 = true;
 
   std::cout << "=== Edge::intersects ==============================" << std::endl;
   std::cout << "=== 1st edge =====" << std::endl;
@@ -102,7 +106,6 @@ void Edge::intersects (Edge *e, Points &points)
   PV2 intersection1 = circle->getO() + dir / d * a + normal->getP() / d * h;
   PV2 intersection2 = circle->getO() + dir / d * a - normal->getP() / d * h;
 
-  /*
   std::cout << "   intersection1: " << intersection1.getX().mid() << "," << intersection1.getY().mid() << std::endl;
   std::cout << "   intersection2: " << intersection2.getX().mid() << "," << intersection2.getY().mid() << std::endl;
 
