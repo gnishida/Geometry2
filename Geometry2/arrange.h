@@ -28,9 +28,9 @@ class Sweepnode;
 
 class Edge {
  public:
-  Edge (Vertex *tail, Edge *twin, Edge *next, bool in, bool aflag, bool flag)
+  Edge (Vertex *tail, Edge *twin, Edge *next, bool in, bool aflag, bool flag, Point *circle_center, const Parameter &circle_r)
     : tail(tail), helper(0), twin(twin), next(next), face(0), u(0), node(0), 
-    in(in), aflag(aflag), flag(flag) {}
+    in(in), aflag(aflag), flag(flag), circle_center(circle_center), circle_r(circle_r) {}
   ~Edge () { delete u; }
   Vertex * head () const { return twin->tail; }
   bool incident (Edge *e) const;
@@ -38,7 +38,7 @@ class Edge {
   bool increasingY ();
   bool clockwise (Edge *e);
   bool leftOf (Edge *e);
-  bool intersects (Edge *e);
+  void intersects (Edge *e, Points &points);
   Edge * pred () const;
   Edge * succ () const;
   Edge * formLoop ();
@@ -50,6 +50,9 @@ class Edge {
   Point *u;
   Sweepnode *node;
   bool in, aflag, flag;
+
+  Point* circle_center;
+  Parameter circle_r;
 };
 
 typedef vector<Edge *> Edges;
@@ -129,12 +132,13 @@ class Arrangement {
   Arrangement (bool rbflag = false) :rbflag(rbflag) {}
   ~Arrangement ();
   Vertex * addVertex (Point *p);
-  Edge * addEdge (Vertex *tail = 0, Vertex *head = 0, bool aflag = true,
+  Edge * addEdge (Point *circle_center, const Parameter &circle_r, Vertex *tail = 0, Vertex *head = 0, bool aflag = true,
 		  bool flag = false);
   Edge * addHalfEdge (Vertex *tail, Edge *twin, Edge *next, bool in,
-		      bool aflag, bool flag);
+		      bool aflag, bool flag, Point *circle_center, const Parameter &circle_r);
   void removeEdge (Edge *e);
-  void addLoop (const Points &pts);
+  //void addLoop (const Points &pts);
+  void addCircle (Point *o, const Parameter &radius);
   void intersectEdges ();
   void insert (Edge *e, Sweep &sweep, Events &heap, EpairSet &eset) const;
   void remove (Edge *e, Sweep &sweep, Events &heap, EpairSet &eset) const;
