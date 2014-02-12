@@ -112,7 +112,7 @@ void Edge::intersects (Edge *e, Points &points)
   if (tail->p->getP().getX() < head()->p->getP().getX()) {
     if (intersection1.getX() < tail->p->getP().getX() || intersection1.getX() > head()->p->getP().getX()) {
 	  //std::cout << "     intersection1 is not between X of circle 1" << std::endl;
-	  intersected1 = false;
+	  withinXrange1 = false;
 	}
     if (intersection2.getX() < tail->p->getP().getX() || intersection2.getX() > head()->p->getP().getX()) {
 	  //std::cout << "     intersection2 is not between X of circle 1" << std::endl;
