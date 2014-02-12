@@ -2,6 +2,7 @@
 #define ARRANGE
 
 #include "point.h"
+#include "circle.h"
 #include <set>
 #include <map>
 
@@ -28,9 +29,9 @@ class Sweepnode;
 
 class Edge {
  public:
-  Edge (Vertex *tail, Edge *twin, Edge *next, bool in, bool aflag, bool flag, Point *circle_center, const Parameter &circle_r)
+  Edge (Vertex *tail, Edge *twin, Edge *next, bool in, bool aflag, bool flag, Circle *circle)
     : tail(tail), helper(0), twin(twin), next(next), face(0), u(0), node(0), 
-    in(in), aflag(aflag), flag(flag), circle_center(circle_center), circle_r(circle_r) {}
+    in(in), aflag(aflag), flag(flag), circle(circle) {}
   ~Edge () { delete u; }
   Vertex * head () const { return twin->tail; }
   bool incident (Edge *e) const;
@@ -51,8 +52,9 @@ class Edge {
   Sweepnode *node;
   bool in, aflag, flag;
 
-  Point* circle_center;
-  Parameter circle_r;
+  //Point* circle_center;
+  //Parameter circle_r;
+  Circle* circle;
 };
 
 typedef vector<Edge *> Edges;
@@ -71,13 +73,35 @@ typedef set<Epair> EpairSet;
 
 class CirclePair {
  public:
-  CirclePair (Point *c1, Parameter &r1, Point *c2, Parameter &r2) : c1(c1), r1(r1), c2(c2), r2(r2) {}
+  CirclePair (Circle *c1, Circle *c2) : c1(c1), c2(c2) {}
   bool operator< (const CirclePair &p) const {
-	return c1 < c2 || c1 == c2 && r1 < r2;
+	/*std::cout << "=== CirclePair::operator< =========" << std::endl;
+	std::cout << "   C1: (" << c1->getO().getX().mid() << "," << c1->getO().getY().mid() << std::endl;
+	std::cout << "   r1: " << c1->getRR().sqrt().mid() << std::endl;
+	std::cout << "   C2: (" << c2->getO().getX().mid() << "," << c2->getO().getY().mid() << std::endl;
+	std::cout << "   r2: " << c2->getRR().sqrt().mid() << std::endl;
+	std::cout << "   P:" << std::endl;
+	std::cout << "   C1: (" << p.c1->getO().getX().mid() << "," << p.c1->getO().getY().mid() << std::endl;
+	std::cout << "   r1: " << p.c1->getRR().sqrt().mid() << std::endl;
+	std::cout << "   C2: (" << p.c2->getO().getX().mid() << "," << p.c2->getO().getY().mid() << std::endl;
+	std::cout << "   r2: " << p.c2->getRR().sqrt().mid() << std::endl;*/
+
+    if (c1 < p.c1) {
+      std::cout << "  ret true (1)" << std::endl;
+      return true;
+	}
+	std::cout << "  ok 1" << std::endl;
+	if (c1 == p.c1 && c2 < p.c2) {
+      std::cout << "  c1 == p.c1 && c2 < p.c2, then ret true(2)" << std::endl;
+      return true;
+    }
+
+	std::cout << "c1 > p.c1 || c2 > p.c2" << std::endl;
+
+	return false;
   }
 
-  Point *c1, *c2;
-  Parameter r1, r2;
+  Circle *c1, *c2;
 };
 
 typedef set<CirclePair> CirclePairSet;
@@ -145,18 +169,18 @@ class Arrangement {
   Arrangement (bool rbflag = false) :rbflag(rbflag) {}
   ~Arrangement ();
   Vertex * addVertex (Point *p);
-  Edge * addEdge (Point *circle_center, const Parameter &circle_r, Vertex *tail = 0, Vertex *head = 0, bool aflag = true,
+  Edge * addEdge (Circle *circle, Vertex *tail = 0, Vertex *head = 0, bool aflag = true,
 		  bool flag = false);
   Edge * addHalfEdge (Vertex *tail, Edge *twin, Edge *next, bool in,
-		      bool aflag, bool flag, Point *circle_center, const Parameter &circle_r);
+		      bool aflag, bool flag, Circle *circle);
   void removeEdge (Edge *e);
   //void addLoop (const Points &pts);
-  void addCircle (Point *o, const Parameter &radius);
+  void addCircle (Circle *circle);
   void intersectEdges ();
-  void insert (Edge *e, Sweep &sweep, Events &heap, EpairSet &eset) const;
-  void remove (Edge *e, Sweep &sweep, Events &heap, EpairSet &eset) const;
+  void insert (Edge *e, Sweep &sweep, Events &heap, CirclePairSet &eset) const;
+  void remove (Edge *e, Sweep &sweep, Events &heap, CirclePairSet &eset) const;
   void swap (Edge *e, Edge *f, Point *p, Sweep &sweep, 
-	     Events &heap, EpairSet &eset);
+	     Events &heap, CirclePairSet &eset);
   void check (Edge *e, Edge *f, Events &heap, CirclePairSet &eset) const;
   void split (Edge *e, Edge *f, Point *p);
   void formFaces ();

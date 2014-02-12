@@ -42,6 +42,17 @@ class Circle3pts : public Circle {
   { calculate(); }
 };
 
+class Circle1pt1rad : public Circle {
+ private:
+  Objects getObjects () { return Objects(); }
+  void calcualte () {}
+ public:
+  Circle1pt1rad (const PV2 &o, const Parameter &r) {
+    this->o = o;
+    this->rr = r * r;
+  }
+};
+
 Predicate2(PointInCircle, Point *, p, Circle *, c);
 
 #endif

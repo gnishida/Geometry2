@@ -3,6 +3,7 @@
 #include "point.h"
 #include "acp.h"
 #include "arrange.h"
+#include "circle.h"
 
 using namespace std;
 
@@ -13,14 +14,14 @@ int main(int argc, char *argv[]) {
 	Point* p1 = new InputPoint(0, 0);
 	Point* p2 = new InputPoint(10, 0);
 
-	a.addCircle(p1, Parameter((double)10));
-	b.addCircle(p2, Parameter((double)10));
+	a.addCircle(new Circle1pt1rad(PV2(0, 0), Parameter((double)10)));
+	b.addCircle(new Circle1pt1rad(PV2(10, 0), Parameter((double)10)));
 
 	Arrangement* o = overlay(&a, &b);
 
-	std::cout << "Vertices: " << a.vertices.size() << std::endl;
-	std::cout << "Edges: " << a.edges.size() << std::endl;
-	std::cout << "Faces: " << a.faces.size() << std::endl;
+	std::cout << "Vertices: " << o->vertices.size() << std::endl;
+	std::cout << "Edges: " << o->edges.size() << std::endl;
+	std::cout << "Faces: " << o->faces.size() << std::endl;
 
 	/*
 	for (int i = 0; i < o->vertices.size(); ++i) {
