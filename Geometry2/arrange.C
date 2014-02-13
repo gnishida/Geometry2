@@ -73,10 +73,6 @@ void Edge::intersects (Edge *e, Points &points)
 {
   bool intersected1 = true;
   bool intersected2 = true;
-  bool withinXrange1 = true;
-  bool withinXrange2 = true;
-  bool withinYrange1 = true;
-  bool withinYrange2 = true;
 
   std::cout << "=== Edge::intersects ==============================" << std::endl;
   std::cout << "=== 1st edge =====" << std::endl;
@@ -90,12 +86,18 @@ void Edge::intersects (Edge *e, Points &points)
 
   PV2 dir = e->circle->getO() - circle->getO();
   Parameter d2 = dir.dot(dir);
-  if (d2 > (circle->getRR().sqrt() + e->circle->getRR().sqrt()) * (circle->getRR().sqrt() + e->circle->getRR().sqrt())) {
+  Parameter d = d2.sqrt();
+
+  if (d > circle->getRR().sqrt() + e->circle->getRR().sqrt()) {
 	std::cout << "  too far away!" << std::endl;
     return;
   }
 
-  Parameter d = d2.sqrt();
+  if (d < (circle->getRR().sqrt() - e->circle->getRR().sqrt()).abs()) {
+    std::cout << "  One circle is inside the other." << std::endl;
+	return;
+  }
+
 
   Parameter a = (d2 + circle->getRR() - e->circle->getRR()) / 2 / d;
   PV2 midPt = circle->getO() + dir * a / d;
@@ -109,138 +111,26 @@ void Edge::intersects (Edge *e, Points &points)
   std::cout << "   intersection1: " << intersection1.getX().mid() << "," << intersection1.getY().mid() << std::endl;
   std::cout << "   intersection2: " << intersection2.getX().mid() << "," << intersection2.getY().mid() << std::endl;
 
-  if (tail->p->getP().getX() < head()->p->getP().getX()) {
-	try {
-    if (intersection1.getX() < tail->p->getP().getX() || intersection1.getX() > head()->p->getP().getX()) {
-	  //std::cout << "     intersection1 is not between X of circle 1" << std::endl;
-	  withinXrange1 = false;
-	}
-    } catch (acp::SignException ex) {
-    }
-	try {
-    if (intersection2.getX() < tail->p->getP().getX() || intersection2.getX() > head()->p->getP().getX()) {
-	  //std::cout << "     intersection2 is not between X of circle 1" << std::endl;
-	  intersected2 = false;
-	}
-    } catch (acp::SignException ex) {
-    }
-  } else {
-	try {
-	if (intersection1.getX() > tail->p->getP().getX() || intersection1.getX() < head()->p->getP().getX()) {
-	  //std::cout << "     intersection1 is not between X of circle 1" << std::endl;
-	  intersected1 = false;
-	}
-    } catch (acp::SignException ex) {
-    }
-	try {
-	if (intersection2.getX() > tail->p->getP().getX() || intersection2.getX() < head()->p->getP().getX()) {
-	  //std::cout << "     intersection2 is not between X of circle 1" << std::endl;
-	  intersected2 = false;
-	}
-    } catch (acp::SignException ex) {
-    }
-  }
 
-  if (tail->p->getP().getY() < head()->p->getP().getY()) {
-	try {
-    if (intersection1.getY() < tail->p->getP().getY() || intersection1.getY() > head()->p->getP().getY()) {
-	  //std::cout << "     intersection1 is not between Y of circle 1" << std::endl;
-	  intersected1 = false;
-	}
-    } catch (acp::SignException ex) {
-    }
-	try {
-    if (intersection2.getY() < tail->p->getP().getY() || intersection2.getY() > head()->p->getP().getY()) {
-	  //std::cout << "     intersection2 is not between Y of circle 1" << std::endl;
-	  intersected2 = false;
-	}
-    } catch (acp::SignException ex) {
-    }
-  } else {
-	try {
-	if (intersection1.getY() > tail->p->getP().getY() || intersection1.getY() < head()->p->getP().getY()) {
-	  //std::cout << "     intersection1 is not between Y of circle 1" << std::endl;
-	  intersected1 = false;
-	}
-    } catch (acp::SignException ex) {
-    }
-	try {
-	if (intersection2.getY() > tail->p->getP().getY() || intersection2.getY() < head()->p->getP().getY()) {
-	  //std::cout << "     intersection2 is not between Y of circle 1" << std::endl;
-	  intersected2 = false;
-	}
-    } catch (acp::SignException ex) {
-    }
-  }
-
-  if (e->tail->p->getP().getX() < e->head()->p->getP().getX()) {
-	try {
-	if (intersection1.getX() < e->tail->p->getP().getX() || intersection1.getX() > e->head()->p->getP().getX()) {
-	  //std::cout << "     intersection1 is not between X of circle 2" << std::endl;
-	  intersected1 = false;
-	}
-    } catch (acp::SignException ex) {
-    }
-	try {
-    if (intersection2.getX() < e->tail->p->getP().getX() || intersection2.getX() > e->head()->p->getP().getX()) {
-	  //std::cout << "     intersection2 is not between X of circle 2" << std::endl;
-	  intersected2 = false;
-	}
-    } catch (acp::SignException ex) {
-    }
-  } else {
-	try {
-	if (intersection1.getX() > e->tail->p->getP().getX() || intersection1.getX() < e->head()->p->getP().getX()) {
-	  //std::cout << "     intersection1 is not between X of circle 2" << std::endl;
-	  intersected1 = false;
-	}
-    } catch (acp::SignException ex) {
-    }
-	try {
-	if (intersection2.getX() > e->tail->p->getP().getX() || intersection2.getX() < e->head()->p->getP().getX()) {
-	  //std::cout << "     intersection2 is not between X of circle 2" << std::endl;
-	  intersected2 = false;
-	}
-    } catch (acp::SignException ex) {
-    }
-  }
-
-  if ((e->tail->p->getP().getY() - intersection1.getY()).sign() == (e->head()->p->getP().getY() - intersection1.getY()).sign()) {
+  if ((tail->p->getP().getX() - intersection1.getX()).sign(false) == (head()->p->getP().getX() - intersection1.getX()).sign(false) ||
+	  (tail->p->getP().getY() - intersection1.getY()).sign(false) == (head()->p->getP().getY() - intersection1.getY()).sign(false)) {
 	  intersected1 = false;
   }
 
-  if (e->tail->p->getP().getY() < e->head()->p->getP().getY()) {
-    try {
-    if (intersection1.getY() < e->tail->p->getP().getY() || intersection1.getY() > e->head()->p->getP().getY()) {
-	  //std::cout << "     intersection1 is not between Y of circle 2" << std::endl;
+  if ((e->tail->p->getP().getX() - intersection1.getX()).sign(false) == (e->head()->p->getP().getX() - intersection1.getX()).sign(false) ||
+	  (e->tail->p->getP().getY() - intersection1.getY()).sign(false) == (e->head()->p->getP().getY() - intersection1.getY()).sign(false)) {
 	  intersected1 = false;
-	}
-    } catch (acp::SignException ex) {
-    }
-	try {
-    if (intersection2.getY() < e->tail->p->getP().getY() || intersection2.getY() > e->head()->p->getP().getY()) {
-	  //std::cout << "     intersection2 is not between Y of circle 2" << std::endl;
-	  intersected2 = false;
-	}
-    } catch (acp::SignException ex) {
-    }
-  } else {
-    try {
-	if (intersection1.getY() > e->tail->p->getP().getY() || intersection1.getY() < e->head()->p->getP().getY()) {
-	  //std::cout << "     intersection1 is not between Y of circle 2" << std::endl;
-	  intersected1 = false;
-	}
-    } catch (acp::SignException ex) {
-    }
-    try {
-	if (intersection2.getY() > e->tail->p->getP().getY() || intersection2.getY() < e->head()->p->getP().getY()) {
-	  //std::cout << "     intersection2 is not between Y of circle 2" << std::endl;
-	  intersected2 = false;
-	}
-    } catch (acp::SignException ex) {
-    }
   }
 
+  if ((tail->p->getP().getX() - intersection2.getX()).sign(false) == (head()->p->getP().getX() - intersection2.getX()).sign(false) ||
+	  (tail->p->getP().getY() - intersection2.getY()).sign(false) == (head()->p->getP().getY() - intersection2.getY()).sign(false)) {
+	  intersected2 = false;
+  }
+
+  if ((e->tail->p->getP().getX() - intersection2.getX()).sign(false) == (e->head()->p->getP().getX() - intersection2.getX()).sign(false) ||
+	  (e->tail->p->getP().getY() - intersection2.getY()).sign(false) == (e->head()->p->getP().getY() - intersection2.getY()).sign(false)) {
+	  intersected2 = false;
+  }
   //std::cout << "   intersected1: " << intersected1 << std::endl;
   //std::cout << "   intersected2: " << intersected2 << std::endl;
 

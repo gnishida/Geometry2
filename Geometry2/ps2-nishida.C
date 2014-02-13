@@ -8,9 +8,33 @@
 using namespace std;
 
 int main(int argc, char *argv[]) {
+	int numCircles;
+	std::cin >> numCircles;
+
+	vector<Circle1pt1rad*> circles;
+
+	for (int i = 0; i < numCircles; ++i) {
+		double x, y, r;
+		std::cin >> x >> y >> r;
+
+		circles.push_back(new Circle1pt1rad(PV2(x, y), Parameter(r)));
+	}
+
+	assert(circles.size() >= 2);
+
 	Arrangement a(true);
 	Arrangement b(true);
+	Arrangement* o = new Arrangement(true);
 
+	o->addCircle(circles[0]);
+	for (int i = 1; i < circles.size(); ++i) {
+		Arrangement b(true);
+		b.addCircle(circles[i]);
+
+		o = overlay(o, &b);
+	}
+
+	/*
 	Point* p1 = new InputPoint(0, 0);
 	Point* p2 = new InputPoint(10, 0);
 
@@ -18,6 +42,7 @@ int main(int argc, char *argv[]) {
 	b.addCircle(new Circle1pt1rad(PV2(10, 0), Parameter((double)10)));
 
 	Arrangement* o = overlay(&a, &b);
+	*/
 
 	std::cout << "Vertices: " << o->vertices.size() << std::endl;
 	std::cout << "Edges: " << o->edges.size() << std::endl;
