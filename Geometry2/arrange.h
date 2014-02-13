@@ -52,9 +52,8 @@ class Edge {
   Sweepnode *node;
   bool in, aflag, flag;
 
-  //Point* circle_center;
-  //Parameter circle_r;
   Circle* circle;
+  bool leftOfCircle;
 };
 
 typedef vector<Edge *> Edges;
@@ -70,6 +69,19 @@ class Epair {
 };
 
 typedef set<Epair> EpairSet;
+
+class EdgeCirclePair {
+ public:
+  EdgeCirclePair (Edge *e, Circle *c) : e(e), c(c) {}
+  bool operator< (const EdgeCirclePair &p) const {
+    return e < p.e || e == p.e && c < p.c;
+  }
+
+  Edge *e;
+  Circle *c;
+};
+
+typedef set<EdgeCirclePair> EdgeCirclePairSet;
 
 class CirclePair {
  public:
@@ -177,11 +189,11 @@ class Arrangement {
   //void addLoop (const Points &pts);
   void addCircle (Circle *circle);
   void intersectEdges ();
-  void insert (Edge *e, Sweep &sweep, Events &heap, CirclePairSet &eset) const;
-  void remove (Edge *e, Sweep &sweep, Events &heap, CirclePairSet &eset) const;
+  void insert (Edge *e, Sweep &sweep, Events &heap, EpairSet &eset) const;
+  void remove (Edge *e, Sweep &sweep, Events &heap, EpairSet &eset) const;
   void swap (Edge *e, Edge *f, Point *p, Sweep &sweep, 
-	     Events &heap, CirclePairSet &eset);
-  void check (Edge *e, Edge *f, Events &heap, CirclePairSet &eset) const;
+	     Events &heap, EpairSet &eset);
+  void check (Edge *e, Edge *f, Events &heap, EpairSet &eset) const;
   void split (Edge *e, Edge *f, Point *p);
   void formFaces ();
   void addBoundary (Edge *e, Face *f) const;

@@ -110,83 +110,136 @@ void Edge::intersects (Edge *e, Points &points)
   std::cout << "   intersection2: " << intersection2.getX().mid() << "," << intersection2.getY().mid() << std::endl;
 
   if (tail->p->getP().getX() < head()->p->getP().getX()) {
+	try {
     if (intersection1.getX() < tail->p->getP().getX() || intersection1.getX() > head()->p->getP().getX()) {
 	  //std::cout << "     intersection1 is not between X of circle 1" << std::endl;
 	  withinXrange1 = false;
 	}
+    } catch (acp::SignException ex) {
+    }
+	try {
     if (intersection2.getX() < tail->p->getP().getX() || intersection2.getX() > head()->p->getP().getX()) {
 	  //std::cout << "     intersection2 is not between X of circle 1" << std::endl;
 	  intersected2 = false;
 	}
+    } catch (acp::SignException ex) {
+    }
   } else {
+	try {
 	if (intersection1.getX() > tail->p->getP().getX() || intersection1.getX() < head()->p->getP().getX()) {
 	  //std::cout << "     intersection1 is not between X of circle 1" << std::endl;
 	  intersected1 = false;
 	}
+    } catch (acp::SignException ex) {
+    }
+	try {
 	if (intersection2.getX() > tail->p->getP().getX() || intersection2.getX() < head()->p->getP().getX()) {
 	  //std::cout << "     intersection2 is not between X of circle 1" << std::endl;
 	  intersected2 = false;
 	}
+    } catch (acp::SignException ex) {
+    }
   }
+
   if (tail->p->getP().getY() < head()->p->getP().getY()) {
+	try {
     if (intersection1.getY() < tail->p->getP().getY() || intersection1.getY() > head()->p->getP().getY()) {
 	  //std::cout << "     intersection1 is not between Y of circle 1" << std::endl;
 	  intersected1 = false;
 	}
+    } catch (acp::SignException ex) {
+    }
+	try {
     if (intersection2.getY() < tail->p->getP().getY() || intersection2.getY() > head()->p->getP().getY()) {
 	  //std::cout << "     intersection2 is not between Y of circle 1" << std::endl;
 	  intersected2 = false;
 	}
+    } catch (acp::SignException ex) {
+    }
   } else {
+	try {
 	if (intersection1.getY() > tail->p->getP().getY() || intersection1.getY() < head()->p->getP().getY()) {
 	  //std::cout << "     intersection1 is not between Y of circle 1" << std::endl;
 	  intersected1 = false;
 	}
+    } catch (acp::SignException ex) {
+    }
+	try {
 	if (intersection2.getY() > tail->p->getP().getY() || intersection2.getY() < head()->p->getP().getY()) {
 	  //std::cout << "     intersection2 is not between Y of circle 1" << std::endl;
 	  intersected2 = false;
 	}
+    } catch (acp::SignException ex) {
+    }
   }
 
   if (e->tail->p->getP().getX() < e->head()->p->getP().getX()) {
-    if (intersection1.getX() < e->tail->p->getP().getX() || intersection1.getX() > e->head()->p->getP().getX()) {
+	try {
+	if (intersection1.getX() < e->tail->p->getP().getX() || intersection1.getX() > e->head()->p->getP().getX()) {
 	  //std::cout << "     intersection1 is not between X of circle 2" << std::endl;
 	  intersected1 = false;
 	}
+    } catch (acp::SignException ex) {
+    }
+	try {
     if (intersection2.getX() < e->tail->p->getP().getX() || intersection2.getX() > e->head()->p->getP().getX()) {
 	  //std::cout << "     intersection2 is not between X of circle 2" << std::endl;
 	  intersected2 = false;
 	}
+    } catch (acp::SignException ex) {
+    }
   } else {
+	try {
 	if (intersection1.getX() > e->tail->p->getP().getX() || intersection1.getX() < e->head()->p->getP().getX()) {
 	  //std::cout << "     intersection1 is not between X of circle 2" << std::endl;
 	  intersected1 = false;
 	}
+    } catch (acp::SignException ex) {
+    }
+	try {
 	if (intersection2.getX() > e->tail->p->getP().getX() || intersection2.getX() < e->head()->p->getP().getX()) {
 	  //std::cout << "     intersection2 is not between X of circle 2" << std::endl;
 	  intersected2 = false;
 	}
+    } catch (acp::SignException ex) {
+    }
   }
+
+  if ((e->tail->p->getP().getY() - intersection1.getY()).sign() == (e->head()->p->getP().getY() - intersection1.getY()).sign()) {
+	  intersected1 = false;
+  }
+
   if (e->tail->p->getP().getY() < e->head()->p->getP().getY()) {
+    try {
     if (intersection1.getY() < e->tail->p->getP().getY() || intersection1.getY() > e->head()->p->getP().getY()) {
 	  //std::cout << "     intersection1 is not between Y of circle 2" << std::endl;
 	  intersected1 = false;
 	}
+    } catch (acp::SignException ex) {
+    }
+	try {
     if (intersection2.getY() < e->tail->p->getP().getY() || intersection2.getY() > e->head()->p->getP().getY()) {
 	  //std::cout << "     intersection2 is not between Y of circle 2" << std::endl;
 	  intersected2 = false;
 	}
+    } catch (acp::SignException ex) {
+    }
   } else {
+    try {
 	if (intersection1.getY() > e->tail->p->getP().getY() || intersection1.getY() < e->head()->p->getP().getY()) {
 	  //std::cout << "     intersection1 is not between Y of circle 2" << std::endl;
 	  intersected1 = false;
 	}
+    } catch (acp::SignException ex) {
+    }
+    try {
 	if (intersection2.getY() > e->tail->p->getP().getY() || intersection2.getY() < e->head()->p->getP().getY()) {
 	  //std::cout << "     intersection2 is not between Y of circle 2" << std::endl;
 	  intersected2 = false;
 	}
+    } catch (acp::SignException ex) {
+    }
   }
-  */
 
   //std::cout << "   intersected1: " << intersected1 << std::endl;
   //std::cout << "   intersected2: " << intersected2 << std::endl;
@@ -484,7 +537,7 @@ void Arrangement::intersectEdges ()
   Events heap;
   makeHeap(edges, heap);
   Sweep sweep;
-  CirclePairSet eset;
+  EpairSet eset;
   while (!heap.empty()) {
     Event e = popHeap(heap);
     std::cout << "heap " << e.type << std::endl;
@@ -506,18 +559,32 @@ void Arrangement::intersectEdges ()
 }
 
 void Arrangement::insert (Edge *e, Sweep &sweep, Events &heap,
-			  CirclePairSet &eset) const
+			  EpairSet &eset) const
 {
   sweep.insert(e);
   Edge *pred = e->pred(), *succ = e->succ();
   if (pred && !e->head()->left && e->head() != pred->head())
     e->head()->left = pred->twin;
+
+  std::cout << "insert" << std::endl;
+  std::cout << "pred: " << std::endl;
+  if (pred) {
+    pp(pred->tail->p);
+	pp(pred->head()->p);
+  }
+  std::cout << "succ: " << std::endl;
+  if (succ) {
+    pp(succ->tail->p);
+	pp(succ->head()->p);
+  }
+
+
   check(pred, e, heap, eset);
   check(e, succ, heap, eset);
 }
 
 void Arrangement::remove (Edge *e, Sweep &sweep, Events &heap,
-			  CirclePairSet &eset) const
+			  EpairSet &eset) const
 {
   Edge *pred = e->pred(), *succ = e->succ();
   sweep.remove(e);
@@ -527,7 +594,7 @@ void Arrangement::remove (Edge *e, Sweep &sweep, Events &heap,
 }
 
 void Arrangement::swap (Edge *e, Edge *f, Point *p, Sweep &sweep,
-			Events &heap, CirclePairSet &eset)
+			Events &heap, EpairSet &eset)
 {
   split(e, f, p);
   Edge *pred = e->pred(), *succ = f->succ();
@@ -538,15 +605,18 @@ void Arrangement::swap (Edge *e, Edge *f, Point *p, Sweep &sweep,
   check(e, succ, heap, eset);
 }
 
-void Arrangement::check (Edge *e, Edge *f, Events &heap, CirclePairSet &eset) const
+void Arrangement::check (Edge *e, Edge *f, Events &heap, EpairSet &eset) const
 {
   if (e && f && !(rbflag && e->aflag == f->aflag)) {
     if (e->circle == f->circle) return;
 
-    CirclePair ef(e->circle < f->circle ? e->circle : f->circle, f->circle < e->circle ? f->circle : e->circle);
+	std::cout << "check" << std::endl;
+
+    Epair ef(e < f ? e : f, e < f ? f : e);
     if (eset.find(ef) != eset.end())
       return;
     eset.insert(ef);
+	std::cout << " ... OK" << std::endl;
 
 	Points points;
     e->intersects(f, points);
@@ -578,16 +648,34 @@ void Arrangement::split (Edge *e, Edge *f, Point *p)
     *e3 = addHalfEdge(v, f, e4, ft->in, ft->aflag, ft->flag, f->circle),
     *e2 = addHalfEdge(v, e, e3, et->in, et->aflag, et->flag, e->circle),
     *e1 = addHalfEdge(v, ft, e2, f->in, f->aflag, f->flag, f->circle);
+
+
+
+
   e4->next = e1;
   e->twin = e2;
   et->twin = e4;
   f->twin = e3;
   ft->twin = e1;
+
+  std::cout << "middle split" << std::endl;
+  pp(e->tail->p);
+  pp(e->head()->p);
+  pp(f->tail->p);
+  pp(f->head()->p);
+
+
   e1->u = f->u->copy();
   e2->u = et->u->copy();
   e3->u = ft->u->copy();
   e4->u = e->u->copy();
   v->edge = e1;
+
+  std::cout << "after split" << std::endl;
+  pp(e->tail->p);
+  pp(e->head()->p);
+  pp(f->tail->p);
+  pp(f->head()->p);
 }
 
 void Arrangement::formFaces ()
