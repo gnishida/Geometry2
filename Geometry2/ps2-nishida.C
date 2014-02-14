@@ -23,8 +23,6 @@ int main(int argc, char *argv[]) {
 		radii.push_back(Parameter(r));
 	}
 
-	assert(centers.size() >= 2);
-
 	// setup the arrangement
 	Arrangement a(false);
 	for (int i = 0; i < centers.size(); ++i) {
