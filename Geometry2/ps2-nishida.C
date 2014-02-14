@@ -24,21 +24,23 @@ int main(int argc, char *argv[]) {
 	}
 
 	// setup the arrangement
-	Arrangement a(false);
+	Arrangement arr(false);
+	//vector<Circle*> circles;
+	//circles.resize(centers.size());
 	for (int i = 0; i < centers.size(); ++i) {
-		a.addCircle(centers[i], radii[i]);
+		/*circles[i] =*/ arr.addCircle(centers[i], radii[i]);
 	}
 
 	// compute the overlay
-	a.computePS2();
+	arr.computePS2();
 
 	// show the results
-	std::cout << "Vertices: " << a.vertices.size() << std::endl;
-	std::cout << "Edges: " << a.edges.size() / 2 << std::endl;
-	std::cout << "Faces: " << a.faces.size() << std::endl;
-	std::cout << "Components: " << a.components.size() << std::endl;
-	std::cout << "V - E + F = " << a.vertices.size() - a.edges.size() / 2  + a.faces.size() << std::endl;
-	if (a.vertices.size() - a.edges.size() / 2  + a.faces.size() == 1 + a.components.size()) {
+	std::cout << "Vertices: " << arr.vertices.size() << std::endl;
+	std::cout << "Edges: " << arr.edges.size() / 2 << std::endl;
+	std::cout << "Faces: " << arr.faces.size() << std::endl;
+	std::cout << "Components: " << arr.components.size() << std::endl;
+	std::cout << "V - E + F = " << arr.vertices.size() - arr.edges.size() / 2  + arr.faces.size() << std::endl;
+	if (arr.vertices.size() - arr.edges.size() / 2  + arr.faces.size() == 1 + arr.components.size()) {
 		std::cout << "Correctness was verified." << std::endl;
 	} else {
 		std::cout << "Correctness was not verified." << std::endl;

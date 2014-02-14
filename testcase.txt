@@ -4,7 +4,6 @@
 0 0 10 10 10 10
 
 
-
 Vertices: 10
 Edges: 12
 Faces: 4

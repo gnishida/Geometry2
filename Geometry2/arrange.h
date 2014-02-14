@@ -169,7 +169,7 @@ class Arrangement {
 		      bool aflag, bool flag, Circle *circle, bool leftOfCircle, bool bottomOfCircle);
   void removeEdge (Edge *e);
   //void addLoop (const Points &pts);
-  void addCircle (Point* center, Parameter radius);
+  Circle* addCircle (Point* center, Parameter radius);
   void intersectEdges ();
   void insert (Edge *e, Sweep &sweep, Events &heap, map<CirclePair, Points> &eset) const;
   void remove (Edge *e, Sweep &sweep, Events &heap, map<CirclePair, Points> &eset) const;

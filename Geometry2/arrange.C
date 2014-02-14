@@ -376,7 +376,7 @@ void Arrangement::removeEdge (Edge *e)
   }
 }*/
 
-void Arrangement::addCircle (Point* center, Parameter radius)
+Circle* Arrangement::addCircle (Point* center, Parameter radius)
 {
   PV2 dirX(radius, Parameter((double)0));
   PV2 dirY(Parameter((double)0), radius);
@@ -402,6 +402,8 @@ void Arrangement::addCircle (Point* center, Parameter radius)
   addEdge(circle, true, true, v2, v3);
   addEdge(circle, false, true, v3, v4);
   addEdge(circle, false, false, v4, v1);
+
+  return circle;
 }
 
 void Arrangement::intersectEdges ()
