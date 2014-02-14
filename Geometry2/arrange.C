@@ -63,9 +63,7 @@ bool Edge::clockwise (Edge *e)
 bool Edge::leftOf (Edge *e)
 {
   if (circle == e->circle) {
-  return tail == e->tail ? 
-    LeftTurn(head()->p, e->tail->p, e->head()->p) == -1
-    : LeftTurn(tail->p, e->tail->p, e->head()->p) == -1;
+    return leftOfCircle;
   }
 
   if (e->leftOfCircle) {
@@ -77,27 +75,20 @@ bool Edge::leftOf (Edge *e)
   } 
 }
 
-void Edge::intersects (Edge *e, Points &points)
+bool Edge::intersects (Edge *e, Points &points)
 {
-  if (circle == e->circle) return;
+  if (circle == e->circle) return false;
 
   PV2 dir = e->circle->getO() - circle->getO();
   Parameter d2 = dir.dot(dir);
   Parameter d = d2.sqrt();
 
   if (d > circle->getRR().sqrt() + e->circle->getRR().sqrt()) {
-    return;
+    return false;
   }
 
   if (d < (circle->getRR().sqrt() - e->circle->getRR().sqrt()).abs()) {
-	return;
-  }
-
-  // update the leftmost
-  if (circle->getO().getX() < e->circle->getO().getX()) {
-	e->circle->leftmost = circle->leftmost;
-  } else {
-	circle->leftmost = e->circle->leftmost;
+	return false;
   }
 
   Parameter a = (d2 + circle->getRR() - e->circle->getRR()) / 2 / d;
@@ -118,6 +109,8 @@ void Edge::intersects (Edge *e, Points &points)
     points.push_back(intersection1);
     points.push_back(intersection2);
   }
+
+  return true;
 }
 
 Edge * Edge::pred () const
@@ -398,6 +391,12 @@ void Arrangement::addCircle (Point* center, Parameter radius)
 
   Circle* circle = new Circle1pt1rad(center, radius);
 
+  // initialize the component and its member
+  Component* component = new Component();
+  component->members.insert(circle);
+  circle->component = component;
+  components.push_back(component);
+
   addEdge(circle, true, false, v1, v2);
   addEdge(circle, true, true, v2, v3);
   addEdge(circle, false, true, v3, v4);
@@ -490,7 +489,14 @@ void Arrangement::check (Edge *e, Edge *f, Events &heap, map<CirclePair, Points>
 	  intersections = intersectionsMap[ef];
 	  if (intersections.size() == 0) return;
 	} else {
-	  e->intersects(f, intersections);
+	  if (e->intersects(f, intersections)) {
+		// update components
+		if (e->circle->component != f->circle->component) {
+          e->circle->component->members.insert(f->circle->component->members.begin(), f->circle->component->members.end());
+		  f->circle->component->members.clear();
+		  f->circle->component = e->circle->component;
+		}
+	  }
 	  intersectionsMap[ef] = intersections;
 	}
 
@@ -604,14 +610,22 @@ void Arrangement::computeWindingNumbers () const
   }
 }
 
-void Arrangement::computeNumComponents ()
+void Arrangement::computeComponents ()
 {
-  set<Circle*> components;
-  for (Edges::iterator e = edges.begin(); e != edges.end(); ++e) {
-	components.insert((*e)->circle->leftmost);
+  for (vector<Component*>::iterator it = components.begin(); it != components.end(); ) {
+    if ((*it)->members.size() == 0) {
+	  it = components.erase(it);
+	} else {
+	  ++it;
+	}
   }
+}
 
-  numComponents = components.size();
+void Arrangement::computePS2 ()
+{
+  intersectEdges();
+  formFaces();
+  computeComponents();
 }
 
 Arrangement * setOperation (Arrangement *a, Arrangement *b, SetOp op)
@@ -630,9 +644,6 @@ Arrangement * overlay (Arrangement *a, Arrangement *b)
   arr->intersectEdges();
   arr->formFaces();
   arr->computeWindingNumbers();
-
-  arr->computeNumComponents();
-
 
   return arr;
 }

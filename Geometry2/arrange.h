@@ -27,6 +27,8 @@ class Face;
 
 class Sweepnode;
 
+class Component;
+
 class Edge {
  public:
   Edge (Vertex *tail, Edge *twin, Edge *next, bool in, bool aflag, bool flag, Circle *circle, bool leftOfCircle, bool bottomOfCircle)
@@ -39,7 +41,7 @@ class Edge {
   bool increasingY ();
   bool clockwise (Edge *e);
   bool leftOf (Edge *e);
-  void intersects (Edge *e, Points &points);
+  bool intersects (Edge *e, Points &points);
   Edge * pred () const;
   Edge * succ () const;
   Edge * formLoop ();
@@ -100,6 +102,13 @@ class Face {
 };
 
 typedef vector<Face *> Faces;
+
+class Component {
+ public:
+  set<Circle*> members;
+};
+
+typedef vector<Component*> Components;
 
 class Sweepnode {
  public:
@@ -171,12 +180,14 @@ class Arrangement {
   void formFaces ();
   void addBoundary (Edge *e, Face *f) const;
   void computeWindingNumbers () const;
-  void computeNumComponents ();
+  void computeComponents ();
+  void computePS2 ();
 
   Vertices vertices;
   Edges edges;
   Faces faces;
   int numComponents;
+  Components components;
   bool rbflag;
 };
 

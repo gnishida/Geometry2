@@ -81,3 +81,18 @@ Faces: 4
 Components: 3
 V - E + F = 4
 
+
+■ Test 7
+(このケースで、acp::PrecisionExceptionのエラーが発生)
+./ps2-nishida
+4
+-5 15 4 0 10 4 5 5 4 0 0 4
+
+
+
+Vertices: 22
+Edges: 28
+Faces: 8
+Components: 1
+V - E + F = 2
+

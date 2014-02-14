@@ -26,24 +26,21 @@ int main(int argc, char *argv[]) {
 	assert(centers.size() >= 2);
 
 	// setup the arrangement
-	Arrangement a;
-	Arrangement b;
-
-	a.addCircle(centers[0], radii[0]);
-	for (int i = 1; i < centers.size(); ++i) {
-		b.addCircle(centers[i], radii[i]);
+	Arrangement a(false);
+	for (int i = 0; i < centers.size(); ++i) {
+		a.addCircle(centers[i], radii[i]);
 	}
 
 	// compute the overlay
-	Arrangement *o = overlay(&a, &b);
+	a.computePS2();
 
 	// show the results
-	std::cout << "Vertices: " << o->vertices.size() << std::endl;
-	std::cout << "Edges: " << o->edges.size() / 2 << std::endl;
-	std::cout << "Faces: " << o->faces.size() << std::endl;
-	std::cout << "Components: " << o->numComponents << std::endl;
-	std::cout << "V - E + F = " << o->vertices.size() - o->edges.size() / 2  + o->faces.size() << std::endl;
-	if (o->vertices.size() - o->edges.size() / 2  + o->faces.size() == 1 + o->numComponents) {
+	std::cout << "Vertices: " << a.vertices.size() << std::endl;
+	std::cout << "Edges: " << a.edges.size() / 2 << std::endl;
+	std::cout << "Faces: " << a.faces.size() << std::endl;
+	std::cout << "Components: " << a.components.size() << std::endl;
+	std::cout << "V - E + F = " << a.vertices.size() - a.edges.size() / 2  + a.faces.size() << std::endl;
+	if (a.vertices.size() - a.edges.size() / 2  + a.faces.size() == 1 + a.components.size()) {
 		std::cout << "Correctness was verified." << std::endl;
 	} else {
 		std::cout << "Correctness was not verified." << std::endl;

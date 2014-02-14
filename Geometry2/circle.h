@@ -3,6 +3,8 @@
 
 #include "point.h"
 
+class Component;
+
 class Circle : public Object {
  private:
   Parameters getParameters () { return Parameters(rr, o); }
@@ -10,7 +12,7 @@ class Circle : public Object {
   PV2 o;
   Parameter rr;
  public:
-  Circle* leftmost;
+  Component* component;
  public:
   PV2 getO () { return o; }
   Parameter getRR () { return rr; }
@@ -52,7 +54,6 @@ class Circle1pt1rad : public Circle {
   Circle1pt1rad (Point* point, Parameter r) {
     this->o = point->getP();
     this->rr = r * r;
-	this->leftmost = this;
   }
 };
 
