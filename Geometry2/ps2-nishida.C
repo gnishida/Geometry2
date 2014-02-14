@@ -108,49 +108,62 @@ int main(int argc, char *argv[]) {
 	}
   */
 
-
 	/*
 	int numCircles;
 	std::cin >> numCircles;
 
-	vector<Circle1pt1rad*> circles;
+	Points centers;
+	std::vector<Parameter> radii;
 
 	for (int i = 0; i < numCircles; ++i) {
 		double x, y, r;
 		std::cin >> x >> y >> r;
 
-		circles.push_back(new Circle1pt1rad(PV2(x, y), Parameter(r)));
+		centers.push_back(new InputPoint(x, y));
+		radii.push_back(Parameter(r));
 	}
 
-	assert(circles.size() >= 2);
+	for (int i = 0; i < centers.size(); ++i) {
+		cout << "(" << centers[i]->getP().getX().mid() << "," << centers[i]->getP().getY().mid() << "," << radii[i].mid() << endl;
+	}
+
+	assert(centers.size() >= 2);
 
 	Arrangement a(true);
 	Arrangement b(true);
 
-	a.addCircle(circles[0]);
-	for (int i = 1; i < circles.size(); ++i) {
-		b.addCircle(circles[i]);
+	a.addCircle(centers[0], radii[0]);
+	for (int i = 1; i < centers.size(); ++i) {
+		b.addCircle(centers[i], radii[i]);
 	}
 
 	
 	Arrangement *o = overlay(&a, &b);
+
+	std::cout << "Vertices: " << o->vertices.size() << std::endl;
+	std::cout << "Edges: " << o->edges.size() / 2 << std::endl;
+	std::cout << "Faces: " << o->faces.size() << std::endl;
+	std::cout << "V - E + F = " << o->vertices.size() - o->edges.size() / 2  + o->faces.size() << std::endl;
 	*/
 
-	Arrangement a(true);
-	Arrangement b(true);
+	Arrangement a;
+	Arrangement b;
 
 	Point* p1 = new InputPoint(0, 0);
-	Point* p2 = new InputPoint(10, 10);
+	Point* p2 = new InputPoint(10, 0);
+	Point* p3 = new InputPoint(5, 15);
 
+	/*
 	Circle *c1 = new Circle1pt1rad(p1, Parameter((double)10)); 
 	Circle *c2 = new Circle1pt1rad(p2, Parameter((double)10)); 
 
 	PV2 dir = c2->getO() - c1->getO();
 	Parameter d2 = dir.dot(dir);
 	Parameter d = d2.sqrt();
-
+	*/
 	a.addCircle(p1, Parameter((double)10));
 	b.addCircle(p2, Parameter((double)10));
+	b.addCircle(p3, Parameter((double)10));
 
 	Arrangement* o = overlay(&a, &b);
 

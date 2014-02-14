@@ -524,6 +524,10 @@ void Arrangement::swap (Edge *e, Edge *f, Point *p, Sweep &sweep,
 
 void Arrangement::check (Edge *e, Edge *f, Events &heap, map<CirclePair, Points> &intersectionsMap) const
 {
+  if (rbflag) {
+    std::cout << "WARNING!!!!!!!!!!!!!!!!!!!!!" << std::endl;
+  }
+
   if (e && f && !(rbflag && e->aflag == f->aflag)) {
     if (e->circle == f->circle) return;
 
@@ -701,7 +705,7 @@ Arrangement * setOperation (Arrangement *a, Arrangement *b, SetOp op)
 
 Arrangement * overlay (Arrangement *a, Arrangement *b)
 {
-  Arrangement *arr = new Arrangement(true);
+  Arrangement *arr = new Arrangement(false);
   copyEdges(a, true, arr);
   copyEdges(b, false, arr);
   std::cout << "overlay: copyEdges" << std::endl;
