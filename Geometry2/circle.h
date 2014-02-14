@@ -10,6 +10,8 @@ class Circle : public Object {
   PV2 o;
   Parameter rr;
  public:
+  Circle* leftmost;
+ public:
   PV2 getO () { return o; }
   Parameter getRR () { return rr; }
   bool contains (Point *p);
@@ -50,6 +52,7 @@ class Circle1pt1rad : public Circle {
   Circle1pt1rad (Point* point, Parameter r) {
     this->o = point->getP();
     this->rr = r * r;
+	this->leftmost = this;
   }
 };
 

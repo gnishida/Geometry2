@@ -1,0 +1,82 @@
+﻿■ Test 1
+./ps2-nishida
+2
+0 0 10 10 0 10
+
+
+
+Vertices: 10
+Edges: 12
+Faces: 4
+Components: 1
+V - E + F = 2
+
+
+■ Test 2
+./ps2-nishida
+3
+0 0 10 10 0 10 5 15 10
+
+
+
+Vertices: 18
+Edges: 24
+Faces: 8
+Components: 1
+V - E + F = 2
+
+
+■ Test 3
+./ps2-nishida
+3
+0 0 10 15 0 10 30 0 10
+
+
+
+Vertices: 16
+Edges: 20
+Faces: 6
+Components: 1
+V - E + F = 2
+
+
+■ Test 4
+./ps2-nishida
+4
+0 0 10 15 0 10 30 0 10 7.5 10 10
+
+
+
+Vertices: 24
+Edges: 32
+Faces: 10
+Components: 1
+V - E + F = 2
+
+
+■ Test 5
+./ps2-nishida
+2
+0 0 10 0 0 20
+
+
+
+Vertices: 8
+Edges: 8
+Faces: 3
+Components: 2
+V - E + F = 3
+
+
+■ Test 6
+./ps2-nishida
+3
+0 0 10 20 20 10 40 40 10
+
+
+
+Vertices: 12
+Edges: 12
+Faces: 4
+Components: 3
+V - E + F = 4

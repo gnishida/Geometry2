@@ -91,6 +91,8 @@ bool Edge::leftOf (Edge *e)
 
 void Edge::intersects (Edge *e, Points &points)
 {
+  if (circle == e->circle) return;
+
   std::cout << "=== Edge::intersects ==============================" << std::endl;
   std::cout << "=== 1st edge =====" << std::endl;
   pp(tail->p);
@@ -117,6 +119,13 @@ void Edge::intersects (Edge *e, Points &points)
   if (d < (circle->getRR().sqrt() - e->circle->getRR().sqrt()).abs()) {
     std::cout << "  One circle is inside the other." << std::endl;
 	return;
+  }
+
+  // update the leftmost
+  if (circle->getO().getX() < e->circle->getO().getX()) {
+	e->circle->leftmost = circle->leftmost;
+  } else {
+	circle->leftmost = e->circle->leftmost;
   }
 
   std::cout << "OK" << std::endl;
@@ -695,6 +704,16 @@ void Arrangement::computeWindingNumbers () const
   }
 }
 
+void Arrangement::computeNumComponents ()
+{
+  set<Circle*> components;
+  for (Edges::iterator e = edges.begin(); e != edges.end(); ++e) {
+	components.insert((*e)->circle->leftmost);
+  }
+
+  numComponents = components.size();
+}
+
 Arrangement * setOperation (Arrangement *a, Arrangement *b, SetOp op)
 {
   Arrangement *o = overlay(a, b);
@@ -713,6 +732,10 @@ Arrangement * overlay (Arrangement *a, Arrangement *b)
   std::cout << "overlay: intersectEdges" << std::endl;
   arr->formFaces();
   arr->computeWindingNumbers();
+
+  arr->computeNumComponents();
+
+
   return arr;
 }
 

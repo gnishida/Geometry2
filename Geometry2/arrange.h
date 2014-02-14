@@ -89,28 +89,12 @@ class CirclePair {
  public:
   CirclePair (Circle *c1, Circle *c2) : c1(c1), c2(c2) {}
   bool operator< (const CirclePair &p) const {
-	/*std::cout << "=== CirclePair::operator< =========" << std::endl;
-	std::cout << "   C1: (" << c1->getO().getX().mid() << "," << c1->getO().getY().mid() << std::endl;
-	std::cout << "   r1: " << c1->getRR().sqrt().mid() << std::endl;
-	std::cout << "   C2: (" << c2->getO().getX().mid() << "," << c2->getO().getY().mid() << std::endl;
-	std::cout << "   r2: " << c2->getRR().sqrt().mid() << std::endl;
-	std::cout << "   P:" << std::endl;
-	std::cout << "   C1: (" << p.c1->getO().getX().mid() << "," << p.c1->getO().getY().mid() << std::endl;
-	std::cout << "   r1: " << p.c1->getRR().sqrt().mid() << std::endl;
-	std::cout << "   C2: (" << p.c2->getO().getX().mid() << "," << p.c2->getO().getY().mid() << std::endl;
-	std::cout << "   r2: " << p.c2->getRR().sqrt().mid() << std::endl;*/
-
     if (c1 < p.c1) {
-      std::cout << "  ret true (1)" << std::endl;
       return true;
 	}
-	std::cout << "  ok 1" << std::endl;
 	if (c1 == p.c1 && c2 < p.c2) {
-      std::cout << "  c1 == p.c1 && c2 < p.c2, then ret true(2)" << std::endl;
       return true;
     }
-
-	std::cout << "c1 > p.c1 || c2 > p.c2" << std::endl;
 
 	return false;
   }
@@ -200,10 +184,12 @@ class Arrangement {
   void formFaces ();
   void addBoundary (Edge *e, Face *f) const;
   void computeWindingNumbers () const;
+  void computeNumComponents ();
 
   Vertices vertices;
   Edges edges;
   Faces faces;
+  int numComponents;
   bool rbflag;
 };
 

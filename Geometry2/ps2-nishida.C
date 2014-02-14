@@ -108,7 +108,6 @@ int main(int argc, char *argv[]) {
 	}
   */
 
-	/*
 	int numCircles;
 	std::cin >> numCircles;
 
@@ -143,9 +142,16 @@ int main(int argc, char *argv[]) {
 	std::cout << "Vertices: " << o->vertices.size() << std::endl;
 	std::cout << "Edges: " << o->edges.size() / 2 << std::endl;
 	std::cout << "Faces: " << o->faces.size() << std::endl;
+	std::cout << "Components: " << o->numComponents << std::endl;
 	std::cout << "V - E + F = " << o->vertices.size() - o->edges.size() / 2  + o->faces.size() << std::endl;
-	*/
+	if (o->vertices.size() - o->edges.size() / 2  + o->faces.size() == 1 + o->numComponents) {
+		std::cout << "Correctness was verified." << std::endl;
+	} else {
+		std::cout << "Correctness was not verified." << std::endl;
+	}
 
+
+	/*
 	Arrangement a;
 	Arrangement b;
 
@@ -153,14 +159,6 @@ int main(int argc, char *argv[]) {
 	Point* p2 = new InputPoint(10, 0);
 	Point* p3 = new InputPoint(5, 15);
 
-	/*
-	Circle *c1 = new Circle1pt1rad(p1, Parameter((double)10)); 
-	Circle *c2 = new Circle1pt1rad(p2, Parameter((double)10)); 
-
-	PV2 dir = c2->getO() - c1->getO();
-	Parameter d2 = dir.dot(dir);
-	Parameter d = d2.sqrt();
-	*/
 	a.addCircle(p1, Parameter((double)10));
 	b.addCircle(p2, Parameter((double)10));
 	b.addCircle(p3, Parameter((double)10));
@@ -171,6 +169,7 @@ int main(int argc, char *argv[]) {
 	std::cout << "Edges: " << o->edges.size() / 2 << std::endl;
 	std::cout << "Faces: " << o->faces.size() << std::endl;
 	std::cout << "V - E + F = " << o->vertices.size() - o->edges.size() / 2  + o->faces.size() << std::endl;
+	*/
 
 	/*
 	for (int i = 0; i < o->vertices.size(); ++i) {
