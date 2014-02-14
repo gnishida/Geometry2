@@ -47,8 +47,8 @@ class Circle1pt1rad : public Circle {
   Objects getObjects () { return Objects(); }
   void calcualte () {}
  public:
-  Circle1pt1rad (const PV2 &o, const Parameter &r) {
-    this->o = o;
+  Circle1pt1rad (Point* point, Parameter r) {
+    this->o = point->getP();
     this->rr = r * r;
   }
 };

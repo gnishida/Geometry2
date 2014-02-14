@@ -29,9 +29,9 @@ class Sweepnode;
 
 class Edge {
  public:
-  Edge (Vertex *tail, Edge *twin, Edge *next, bool in, bool aflag, bool flag, Circle *circle)
+  Edge (Vertex *tail, Edge *twin, Edge *next, bool in, bool aflag, bool flag, Circle *circle, bool leftOfCircle, bool bottomOfCircle)
     : tail(tail), helper(0), twin(twin), next(next), face(0), u(0), node(0), 
-    in(in), aflag(aflag), flag(flag), circle(circle) {}
+    in(in), aflag(aflag), flag(flag), circle(circle), leftOfCircle(leftOfCircle), bottomOfCircle(bottomOfCircle) {}
   ~Edge () { delete u; }
   Vertex * head () const { return twin->tail; }
   bool incident (Edge *e) const;
@@ -44,6 +44,7 @@ class Edge {
   Edge * succ () const;
   Edge * formLoop ();
   bool outer ();
+  bool withinArc (Point* point) const;
 
   Vertex *tail, *helper;
   Edge *twin, *next;
@@ -54,6 +55,7 @@ class Edge {
 
   Circle* circle;
   bool leftOfCircle;
+  bool bottomOfCircle;
 };
 
 typedef vector<Edge *> Edges;
@@ -181,19 +183,19 @@ class Arrangement {
   Arrangement (bool rbflag = false) :rbflag(rbflag) {}
   ~Arrangement ();
   Vertex * addVertex (Point *p);
-  Edge * addEdge (Circle *circle, Vertex *tail = 0, Vertex *head = 0, bool aflag = true,
+  Edge * addEdge (Circle *circle, bool leftOfCircle, bool bottomOfCircle, Vertex *tail = 0, Vertex *head = 0, bool aflag = true,
 		  bool flag = false);
   Edge * addHalfEdge (Vertex *tail, Edge *twin, Edge *next, bool in,
-		      bool aflag, bool flag, Circle *circle);
+		      bool aflag, bool flag, Circle *circle, bool leftOfCircle, bool bottomOfCircle);
   void removeEdge (Edge *e);
   //void addLoop (const Points &pts);
-  void addCircle (Circle *circle);
+  void addCircle (Point* center, Parameter radius);
   void intersectEdges ();
-  void insert (Edge *e, Sweep &sweep, Events &heap, EpairSet &eset) const;
-  void remove (Edge *e, Sweep &sweep, Events &heap, EpairSet &eset) const;
+  void insert (Edge *e, Sweep &sweep, Events &heap, map<CirclePair, Points> &eset) const;
+  void remove (Edge *e, Sweep &sweep, Events &heap, map<CirclePair, Points> &eset) const;
   void swap (Edge *e, Edge *f, Point *p, Sweep &sweep, 
-	     Events &heap, EpairSet &eset);
-  void check (Edge *e, Edge *f, Events &heap, EpairSet &eset) const;
+	     Events &heap, map<CirclePair, Points> &eset);
+  void check (Edge *e, Edge *f, Events &heap, map<CirclePair, Points> &eset) const;
   void split (Edge *e, Edge *f, Point *p);
   void formFaces ();
   void addBoundary (Edge *e, Face *f) const;

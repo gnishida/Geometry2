@@ -543,7 +543,7 @@ class Parameter {
 
   Parameter intersect (const Parameter &b) const {
     if (l != sentinel && b.l != sentinel) {
-      assert(!(u.r < b.l && b.u.r < l));
+      //assert(!(u.r < b.l && b.u.r < l));
       double il = l < b.l ? b.l : l;
       double iu = u.r < b.u.r ? u.r : b.u.r;
       return Parameter(il, iu);

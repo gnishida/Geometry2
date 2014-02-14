@@ -64,16 +64,33 @@ bool Edge::clockwise (Edge *e)
 
 bool Edge::leftOf (Edge *e)
 {
+  /*
   return tail == e->tail ? 
     LeftTurn(head()->p, e->tail->p, e->head()->p) == -1
     : LeftTurn(tail->p, e->tail->p, e->head()->p) == -1;
+  */
+
+  if (circle == e->circle) {
+  return tail == e->tail ? 
+    LeftTurn(head()->p, e->tail->p, e->head()->p) == -1
+    : LeftTurn(tail->p, e->tail->p, e->head()->p) == -1;
+  }
+
+  if (e->leftOfCircle) {
+    if (tail->p->getP().getX() > e->circle->getO().getX()) return false;
+    PV2 dir = tail->p->getP() - e->circle->getO();
+    if (dir.dot(dir) > e->circle->getRR()) return true;
+    else return false;
+  } else {
+    if (tail->p->getP().getX() < e->circle->getO().getX()) return true;
+    PV2 dir = tail->p->getP() - e->circle->getO();
+    if (dir.dot(dir) > e->circle->getRR()) return false;
+    else return true;
+  } 
 }
 
 void Edge::intersects (Edge *e, Points &points)
 {
-  bool intersected1 = true;
-  bool intersected2 = true;
-
   std::cout << "=== Edge::intersects ==============================" << std::endl;
   std::cout << "=== 1st edge =====" << std::endl;
   pp(tail->p);
@@ -86,18 +103,23 @@ void Edge::intersects (Edge *e, Points &points)
 
   PV2 dir = e->circle->getO() - circle->getO();
   Parameter d2 = dir.dot(dir);
+  std::cout << "d2: " << d2.mid() << std::endl;
   Parameter d = d2.sqrt();
+  std::cout << "d: " << d.mid() << std::endl;
 
   if (d > circle->getRR().sqrt() + e->circle->getRR().sqrt()) {
 	std::cout << "  too far away!" << std::endl;
     return;
   }
 
+  std::cout << "OK" << std::endl;
+
   if (d < (circle->getRR().sqrt() - e->circle->getRR().sqrt()).abs()) {
     std::cout << "  One circle is inside the other." << std::endl;
 	return;
   }
 
+  std::cout << "OK" << std::endl;
 
   Parameter a = (d2 + circle->getRR() - e->circle->getRR()) / 2 / d;
   PV2 midPt = circle->getO() + dir * a / d;
@@ -111,36 +133,14 @@ void Edge::intersects (Edge *e, Points &points)
   std::cout << "   intersection1: " << intersection1.getX().mid() << "," << intersection1.getY().mid() << std::endl;
   std::cout << "   intersection2: " << intersection2.getX().mid() << "," << intersection2.getY().mid() << std::endl;
 
+  delete normal;
 
-  if ((tail->p->getP().getX() - intersection1.getX()).sign(false) == (head()->p->getP().getX() - intersection1.getX()).sign(false) ||
-	  (tail->p->getP().getY() - intersection1.getY()).sign(false) == (head()->p->getP().getY() - intersection1.getY()).sign(false)) {
-	  intersected1 = false;
-  }
-
-  if ((e->tail->p->getP().getX() - intersection1.getX()).sign(false) == (e->head()->p->getP().getX() - intersection1.getX()).sign(false) ||
-	  (e->tail->p->getP().getY() - intersection1.getY()).sign(false) == (e->head()->p->getP().getY() - intersection1.getY()).sign(false)) {
-	  intersected1 = false;
-  }
-
-  if ((tail->p->getP().getX() - intersection2.getX()).sign(false) == (head()->p->getP().getX() - intersection2.getX()).sign(false) ||
-	  (tail->p->getP().getY() - intersection2.getY()).sign(false) == (head()->p->getP().getY() - intersection2.getY()).sign(false)) {
-	  intersected2 = false;
-  }
-
-  if ((e->tail->p->getP().getX() - intersection2.getX()).sign(false) == (e->head()->p->getP().getX() - intersection2.getX()).sign(false) ||
-	  (e->tail->p->getP().getY() - intersection2.getY()).sign(false) == (e->head()->p->getP().getY() - intersection2.getY()).sign(false)) {
-	  intersected2 = false;
-  }
-  //std::cout << "   intersected1: " << intersected1 << std::endl;
-  //std::cout << "   intersected2: " << intersected2 << std::endl;
-
-  if (intersected1) {
-    std::cout << "Intersection1: (" << intersection1.getX().mid() << "," << intersection1.getY().mid() << std::endl;
+  if (intersection1.getY() > intersection2.getY()) {
     points.push_back(new InputPoint(intersection1));
-  }
-  if (intersected2) {
-    std::cout << "Intersection2: (" << intersection2.getX().mid() << "," << intersection2.getY().mid() << std::endl;
     points.push_back(new InputPoint(intersection2));
+  } else {
+    points.push_back(new InputPoint(intersection2));
+    points.push_back(new InputPoint(intersection1));
   }
 }
 
@@ -158,8 +158,14 @@ Edge * Edge::succ () const
 
 Edge * Edge::formLoop ()
 {
+  int count = 0;
+  std::cout << "!*!*!*!*!* [ Edge::formLoop ] !*!*!*!*!" << std::endl;
   Edge *e = this, *l = this;
   while (true) {
+	std::cout << "No. " << (count+1) << std::endl;
+	count++;
+	pp(e->tail->p);
+	pp(e->head()->p);
     e->flag = true;
     e = e->twin->next;
     if (e->flag)
@@ -176,6 +182,17 @@ bool Edge::outer ()
 {
   Edge *f = twin->next;
   return f != twin && LeftTurn(tail->p, head()->p, f->head()->p) == 1;
+}
+
+bool Edge::withinArc (Point* point) const
+{
+  if (leftOfCircle && point->getP().getX() > circle->getO().getX()) return false;
+  if (!leftOfCircle && point->getP().getX() < circle->getO().getX()) return false;
+
+  if (bottomOfCircle && point->getP().getY() > circle->getO().getY()) return false;
+  if (!bottomOfCircle && point->getP().getY() < circle->getO().getY()) return false;
+
+  return true;
 }
 
 void Sweepnode::insert (Edge *e)
@@ -238,11 +255,15 @@ Sweepnode * Sweepnode::max ()
 void Sweep::insert (Edge *e)
 {
   if (root == 0) {
+	std::cout << "Sweep::insert ... no root" << std::endl;
     root = new Sweepnode(e, 0);
     e->node = root;
   }
-  else
+  else {
+	std::cout << "Sweep::insert ... root->insert" << std::endl;
+	std::cout << "    root: " << root->edge->tail->p->getP().getX().mid() << "," <<  root->edge->tail->p->getP().getY().mid() << std::endl;
     root->insert(e);
+  }
 }
 
 void Sweep::remove (Edge *e)
@@ -354,10 +375,10 @@ Vertex * Arrangement::addVertex (Point *p)
   return v;
 }
 
-Edge * Arrangement::addEdge (Circle *circle, Vertex *tail, Vertex *head, bool aflag, bool flag)
+Edge * Arrangement::addEdge (Circle *circle, bool leftOfCircle, bool bottomOfCircle, Vertex *tail, Vertex *head, bool aflag, bool flag)
 {
-  Edge *e = addHalfEdge(tail, 0, 0, true, aflag, flag, circle),
-    *et = addHalfEdge(head, e, 0, false, aflag, flag, circle);
+  Edge *e = addHalfEdge(tail, 0, 0, true, aflag, flag, circle, leftOfCircle, bottomOfCircle),
+    *et = addHalfEdge(head, e, 0, false, aflag, flag, circle, leftOfCircle, bottomOfCircle);
   e->twin = et;
   e->u = new Vector(tail->p, head->p);
   e->twin->u = new Vector(head->p, tail->p);
@@ -367,9 +388,9 @@ Edge * Arrangement::addEdge (Circle *circle, Vertex *tail, Vertex *head, bool af
 }
 
 Edge * Arrangement::addHalfEdge (Vertex *tail, Edge *twin, Edge *next, bool in,
-				 bool aflag, bool flag, Circle *circle)
+				 bool aflag, bool flag, Circle *circle, bool leftOfCircle, bool bottomOfCircle)
 {
-  Edge *e = new Edge(tail, twin, next, in, aflag, flag, circle);
+  Edge *e = new Edge(tail, twin, next, in, aflag, flag, circle, leftOfCircle, bottomOfCircle);
   edges.push_back(e);
   return e;
 }
@@ -402,24 +423,26 @@ void Arrangement::removeEdge (Edge *e)
   }
 }*/
 
-void Arrangement::addCircle (Circle *circle)
+void Arrangement::addCircle (Point* center, Parameter radius)
 {
-  PV2 dirX(circle->getRR().sqrt(), Parameter((double)0));
-  PV2 dirY(Parameter((double)0), circle->getRR().sqrt());
-  PV2 p1 = circle->getO() + dirY;
-  PV2 p2 = circle->getO() - dirX;
-  PV2 p3 = circle->getO() - dirY;
-  PV2 p4 = circle->getO() + dirX;
+  PV2 dirX(radius, Parameter((double)0));
+  PV2 dirY(Parameter((double)0), radius);
+  Point *p1 = new InputPoint(center->getP() + dirY);
+  Point *p2 = new InputPoint(center->getP() - dirX);
+  Point *p3 = new InputPoint(center->getP() - dirY);
+  Point *p4 = new InputPoint(center->getP() + dirX);
 
-  Vertex *v1 = addVertex(new InputPoint(p1));
-  Vertex *v2 = addVertex(new InputPoint(p2));
-  Vertex *v3 = addVertex(new InputPoint(p3));
-  Vertex *v4 = addVertex(new InputPoint(p4));
+  Vertex *v1 = addVertex(p1);
+  Vertex *v2 = addVertex(p2);
+  Vertex *v3 = addVertex(p3);
+  Vertex *v4 = addVertex(p4);
 
-  addEdge(circle, v1, v2);
-  addEdge(circle, v2, v3);
-  addEdge(circle, v3, v4);
-  addEdge(circle, v4, v1);
+  Circle* circle = new Circle1pt1rad(center, radius);
+
+  addEdge(circle, true, false, v1, v2);
+  addEdge(circle, true, true, v2, v3);
+  addEdge(circle, false, true, v3, v4);
+  addEdge(circle, false, false, v4, v1);
 }
 
 void Arrangement::intersectEdges ()
@@ -427,29 +450,33 @@ void Arrangement::intersectEdges ()
   Events heap;
   makeHeap(edges, heap);
   Sweep sweep;
-  EpairSet eset;
+  CirclePairSet eset;
+
+  map<CirclePair, Points> intersectionsMap;
+
   while (!heap.empty()) {
     Event e = popHeap(heap);
     std::cout << "heap " << e.type << std::endl;
 	pp(e.a->tail->p);
 	pp(e.a->head()->p);
+	std::cout << " circle: " << e.a->circle->getO().getX().mid() << "," << e.a->circle->getO().getY().mid() << std::endl;
     std::cout << "===" << std::endl;
 
     switch (e.type) {
     case Insert:
-      insert(e.a, sweep, heap, eset);
+      insert(e.a, sweep, heap, intersectionsMap);
       break;
     case Remove:
-      remove(e.a, sweep, heap, eset);
+      remove(e.a, sweep, heap, intersectionsMap);
       break;
     case Swap:
-      swap(e.a, e.b, e.p, sweep, heap, eset);
+      swap(e.a, e.b, e.p, sweep, heap, intersectionsMap);
     }
   }
 }
 
 void Arrangement::insert (Edge *e, Sweep &sweep, Events &heap,
-			  EpairSet &eset) const
+			  map<CirclePair, Points> &eset) const
 {
   sweep.insert(e);
   Edge *pred = e->pred(), *succ = e->succ();
@@ -474,7 +501,7 @@ void Arrangement::insert (Edge *e, Sweep &sweep, Events &heap,
 }
 
 void Arrangement::remove (Edge *e, Sweep &sweep, Events &heap,
-			  EpairSet &eset) const
+			  map<CirclePair, Points> &eset) const
 {
   Edge *pred = e->pred(), *succ = e->succ();
   sweep.remove(e);
@@ -484,7 +511,7 @@ void Arrangement::remove (Edge *e, Sweep &sweep, Events &heap,
 }
 
 void Arrangement::swap (Edge *e, Edge *f, Point *p, Sweep &sweep,
-			Events &heap, EpairSet &eset)
+			Events &heap, map<CirclePair, Points> &eset)
 {
   split(e, f, p);
   Edge *pred = e->pred(), *succ = f->succ();
@@ -495,32 +522,53 @@ void Arrangement::swap (Edge *e, Edge *f, Point *p, Sweep &sweep,
   check(e, succ, heap, eset);
 }
 
-void Arrangement::check (Edge *e, Edge *f, Events &heap, EpairSet &eset) const
+void Arrangement::check (Edge *e, Edge *f, Events &heap, map<CirclePair, Points> &intersectionsMap) const
 {
   if (e && f && !(rbflag && e->aflag == f->aflag)) {
     if (e->circle == f->circle) return;
 
 	std::cout << "check" << std::endl;
 
-    Epair ef(e < f ? e : f, e < f ? f : e);
-    if (eset.find(ef) != eset.end())
-      return;
-    eset.insert(ef);
+	Points intersections;
+
+    CirclePair ef(e->circle < f->circle ? e->circle : f->circle, e->circle < f->circle ? f->circle : e->circle);
+	if (intersectionsMap.find(ef) != intersectionsMap.end()) {
+	  std::cout << "These two circles are already checked before." << std::endl;
+	  intersections = intersectionsMap[ef];
+	  if (intersections.size() == 0) return;
+	} else {
+	  std::cout << "These two circles are not checked before." << std::endl;
+	  e->intersects(f, intersections);
+	  intersectionsMap[ef] = intersections;
+	}
 	std::cout << " ... OK" << std::endl;
 
-	Points points;
-    e->intersects(f, points);
-	    
-	for (int i = 0; i < points.size(); ++i) {
-	  pushHeap(Event(Swap, points[i], e, f), heap);
-	}
-	/*} else {
-	  if (e->intersects(f)) {
-        Point *p = new LineIntersection(e->tail->p, e->head()->p, 
-		  		      f->tail->p, f->head()->p);
-        pushHeap(Event(Swap, p, e, f), heap);
+	Points remainedIntersections;
+
+	bool swapped = false;
+	std::cout << "#### start checking if intersection is within arc." << std::endl;
+	for (int i = 0; i < intersections.size(); ++i) {
+	  std::cout << " Intersection: " << std::endl;
+	  pp(intersections[i]);
+
+	  if (e->withinArc(intersections[i]) && f->withinArc(intersections[i])) {
+	    std::cout << " ... within arc!!!" << std::endl;
+		if (swapped) {
+		  std::cout << "pushHeap (Swap, f, e)" << std::endl;
+	      pushHeap(Event(Swap, intersections[i], f, e), heap);
+		} else {
+		  std::cout << "pushHeap (Swap, e, f)" << std::endl;
+	      pushHeap(Event(Swap, intersections[i], e, f), heap);
+		}
+		swapped = true;
+	  } else {
+   	    remainedIntersections.push_back(intersections[i]);
 	  }
-    }*/
+	}
+	std::cout << "#### end checking if intersection is within arc." << std::endl;
+	std::cout << intersections.size() - remainedIntersections.size() << std::endl;
+
+	intersectionsMap[ef] = remainedIntersections;
   }
 }
 
@@ -529,15 +577,17 @@ void Arrangement::split (Edge *e, Edge *f, Point *p)
   std::cout << "split" << std::endl;
   pp(e->tail->p);
   pp(e->head()->p);
+  std::cout << "center: " << e->circle->getO().getX().mid() << "," << e->circle->getO().getY().mid() << std::endl;
   pp(f->tail->p);
   pp(f->head()->p);
+  std::cout << "center: " << f->circle->getO().getX().mid() << "," << f->circle->getO().getY().mid() << std::endl;
 
   Vertex *v = addVertex(p);
   Edge *et = e->twin, *ft = f->twin, 
-    *e4 = addHalfEdge(v, et, 0, e->in, e->aflag, e->flag, e->circle),
-    *e3 = addHalfEdge(v, f, e4, ft->in, ft->aflag, ft->flag, f->circle),
-    *e2 = addHalfEdge(v, e, e3, et->in, et->aflag, et->flag, e->circle),
-    *e1 = addHalfEdge(v, ft, e2, f->in, f->aflag, f->flag, f->circle);
+	  *e4 = addHalfEdge(v, et, 0, e->in, e->aflag, e->flag, e->circle, e->leftOfCircle, e->bottomOfCircle),
+    *e3 = addHalfEdge(v, f, e4, ft->in, ft->aflag, ft->flag, f->circle, e->leftOfCircle, e->bottomOfCircle),
+    *e2 = addHalfEdge(v, e, e3, et->in, et->aflag, et->flag, e->circle, e->leftOfCircle, e->bottomOfCircle),
+    *e1 = addHalfEdge(v, ft, e2, f->in, f->aflag, f->flag, f->circle, e->leftOfCircle, e->bottomOfCircle);
 
 
 
@@ -579,12 +629,15 @@ void Arrangement::formFaces ()
     if (!(*e)->flag) {
       Edge *l = (*e)->formLoop();
       if (l->outer()) {
+	std::cout << " this is an outer loop." << std::endl;
 	Face *f = new Face;
 	faces.push_back(f);
 	addBoundary(l, f);
       }
-      else
+      else {
+	std::cout << " this is an inner loop." << std::endl;
 	inner.push_back(l);
+	  }
     }
   sort(inner.begin(), inner.end(), HeadXOrder());
   for (Edges::iterator e = inner.begin(); e != inner.end(); ++e) {
@@ -671,7 +724,7 @@ void copyEdge (Edge *e, bool aflag, Vmap &vmap, Arrangement *a)
 {
   Vertex *t = getVertex(e->tail, vmap, a),
     *h = getVertex(e->head(), vmap, a);
-  a->addEdge(e->circle, t, h, aflag);
+  a->addEdge(e->circle, e->leftOfCircle, e->bottomOfCircle, t, h, aflag);
 }
 
 Vertex * getVertex (Vertex *v, Vmap &vmap, Arrangement *a)
