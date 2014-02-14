@@ -4,7 +4,6 @@
 #include "object.h"
 #include <vector>
 #include <iomanip>
-#include <math.h>
 
 using namespace std;
 using namespace acp;
@@ -102,22 +101,6 @@ class CircumCenter : public Point {
   CircumCenter (Point *a, Point *b, Point *c) 
     : a(a), b(b), c(c) { calculate(); }
   CircumCenter * copy () const { return new CircumCenter(a, b, c); }
-};
-
-class CircumPoint : public Point {
- private:
-  Objects getObjects () { return Objects(); }
-  void calculate () {
-    p = center->getP() + PV2(cos(angle.mid()), sin(angle.mid())) * radius;
-  }
- protected:
-  Point *center;
-  Parameter radius;
-  Parameter angle;
- public:
-  CircumPoint (Point *center, const Parameter radius, const Parameter angle)
-    : center(center), radius(radius), angle(angle) { calculate(); }
-  CircumPoint * copy () const { return new CircumPoint(center, radius, angle); }
 };
 
 void pp (Point *p);

@@ -1,7 +1,5 @@
 #include "arrange.h"
 
-#define M_PI	3.141592653589793238
-
 void Vertex::addEdge (Edge *e)
 {
   if (!edge) {
@@ -230,9 +228,8 @@ void Sweep::insert (Edge *e)
     root = new Sweepnode(e, 0);
     e->node = root;
   }
-  else {
+  else
     root->insert(e);
-  }
 }
 
 void Sweep::remove (Edge *e)
@@ -274,9 +271,8 @@ bool Event::operator< (Event &e)
   if (type == Remove && e.type == Insert && a->tail == e.a->head())
     return false;
   if (type == Insert && e.type == Insert && a->head() == e.a->head() ||
-      type == Remove && e.type == Remove && a->tail == e.a->tail) {
+      type == Remove && e.type == Remove && a->tail == e.a->tail)
     return a < e.a;
-  }
   return YOrder(e);
 }
 
@@ -522,17 +518,15 @@ void Arrangement::split (Edge *e, Edge *f, Point *p)
 {
   Vertex *v = addVertex(p);
   Edge *et = e->twin, *ft = f->twin, 
-	  *e4 = addHalfEdge(v, et, 0, e->in, e->aflag, e->flag, e->circle, e->leftOfCircle, e->bottomOfCircle),
+	*e4 = addHalfEdge(v, et, 0, e->in, e->aflag, e->flag, e->circle, e->leftOfCircle, e->bottomOfCircle),
     *e3 = addHalfEdge(v, f, e4, ft->in, ft->aflag, ft->flag, f->circle, e->leftOfCircle, e->bottomOfCircle),
     *e2 = addHalfEdge(v, e, e3, et->in, et->aflag, et->flag, e->circle, e->leftOfCircle, e->bottomOfCircle),
     *e1 = addHalfEdge(v, ft, e2, f->in, f->aflag, f->flag, f->circle, e->leftOfCircle, e->bottomOfCircle);
-
   e4->next = e1;
   e->twin = e2;
   et->twin = e4;
   f->twin = e3;
   ft->twin = e1;
-
   e1->u = f->u->copy();
   e2->u = et->u->copy();
   e3->u = ft->u->copy();
