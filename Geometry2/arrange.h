@@ -72,19 +72,6 @@ class Epair {
 
 typedef set<Epair> EpairSet;
 
-class EdgeCirclePair {
- public:
-  EdgeCirclePair (Edge *e, Circle *c) : e(e), c(c) {}
-  bool operator< (const EdgeCirclePair &p) const {
-    return e < p.e || e == p.e && c < p.c;
-  }
-
-  Edge *e;
-  Circle *c;
-};
-
-typedef set<EdgeCirclePair> EdgeCirclePairSet;
-
 class CirclePair {
  public:
   CirclePair (Circle *c1, Circle *c2) : c1(c1), c2(c2) {}
