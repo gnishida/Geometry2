@@ -523,12 +523,28 @@ void Arrangement::swap (Edge *e, Edge *f, Point *p, Sweep &sweep,
 			Events &heap, map<CirclePair, Points> &eset)
 {
   split(e, f, p);
-  Edge *pred = e->pred(), *succ = f->succ();
-  sweep.swap(e, f);
+
+  Edge *pred = 0;
+  Edge *succ = 0;
+  if (e->node) {
+    pred = e->pred();
+  }
+  if (f->node) {
+	succ = f->succ();
+  }
+
+  //Edge *pred = e->pred(), *succ = f->succ();
+  if (e->node && f->node) {
+    sweep.swap(e, f);
+  }
   if (pred)
     e->head()->left = pred->twin;
-  check(pred, f, heap, eset);
-  check(e, succ, heap, eset);
+  if (pred) {
+    check(pred, f, heap, eset);
+  }
+  if (succ) {
+    check(e, succ, heap, eset);
+  }
 }
 
 void Arrangement::check (Edge *e, Edge *f, Events &heap, map<CirclePair, Points> &intersectionsMap) const
