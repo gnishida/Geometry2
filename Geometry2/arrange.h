@@ -220,4 +220,6 @@ bool boundary (Edge *e, SetOp op);
 
 bool setop (SetOp op, int wna, int wnb);
 
+void pe (Edge *e);
+
 #endif

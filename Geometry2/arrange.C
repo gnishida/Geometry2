@@ -144,6 +144,7 @@ Edge * Edge::formLoop ()
 bool Edge::outer ()
 {
   Edge *f = twin->next;
+  if (f != twin && f->head()->p == tail->p) return true;
   return f != twin && LeftTurn(tail->p, head()->p, f->head()->p) == 1;
 }
 

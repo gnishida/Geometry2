@@ -83,7 +83,6 @@ V - E + F = 4
 
 
 ■ Test 7
-(このケースで、acp::PrecisionExceptionのエラーが発生)
 ./ps2-nishida
 4
 -5 15 4 0 10 4 5 5 4 0 0 4
