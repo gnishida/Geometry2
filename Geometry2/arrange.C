@@ -94,13 +94,11 @@ bool Edge::intersects (Edge *e, Points &points)
   Parameter a = (d2 + circle->getRR() - e->circle->getRR()) / 2 / d;
   PV2 midPt = circle->getO() + dir * a / d;
 
-  Point* normal = new Normal(new InputPoint(circle->getO()), new InputPoint(e->circle->getO()));
+  Normal normal(new InputPoint(circle->getO()), new InputPoint(e->circle->getO()));
   Parameter h = (circle->getRR() - a * a).sqrt();
 
-  Point* intersection1 = new InputPoint(circle->getO() + dir / d * a + normal->getP() / d * h);
-  Point* intersection2 = new InputPoint(circle->getO() + dir / d * a - normal->getP() / d * h);
-
-  delete normal;
+  Point* intersection1 = new InputPoint(midPt + normal.getP() / d * h);
+  Point* intersection2 = new InputPoint(midPt - normal.getP() / d * h);
 
   if (::YOrder(intersection1, intersection2)) {
     points.push_back(intersection2);
@@ -267,6 +265,16 @@ bool Event::operator< (Event &e)
   if (type == Insert && e.type == Insert && a->head() == e.a->head() ||
       type == Remove && e.type == Remove && a->tail == e.a->tail)
     return a < e.a;
+
+  if (type == Insert && e.type == Swap && a->head() == e.a->head())
+	return false;
+  if (type == Swap && e.type == Insert && a->head() == e.a->head())
+	return true;
+  if (type == Remove && e.type == Swap && a->tail == e.a->tail)
+	return true;
+  if (type == Swap && e.type == Remove && a->tail == e.a->tail)
+	return false;
+
   return YOrder(e);
 }
 

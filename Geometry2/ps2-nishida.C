@@ -8,6 +8,8 @@
 using namespace std;
 
 int main(int argc, char *argv[]) {
+	Parameter::enable();
+
 	// read input data from the standard input
 	int numCircles;
 	std::cin >> numCircles;
@@ -25,13 +27,11 @@ int main(int argc, char *argv[]) {
 
 	// setup the arrangement
 	Arrangement arr(false);
-	//vector<Circle*> circles;
-	//circles.resize(centers.size());
 	for (int i = 0; i < centers.size(); ++i) {
-		/*circles[i] =*/ arr.addCircle(centers[i], radii[i]);
+		arr.addCircle(centers[i], radii[i]);
 	}
 
-	// compute the overlay
+	// compute the overlay of all the circles
 	arr.computePS2();
 
 	// show the results
