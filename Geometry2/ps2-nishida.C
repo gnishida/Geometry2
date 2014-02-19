@@ -10,13 +10,6 @@ using namespace std;
 int main(int argc, char *argv[]) {
 	Parameter::enable();
 
-
-	Point* pt1 = new InputPoint(0, 0);
-	Point* pt2 = new InputPoint(10, 10);
-	Point* normal = new Normal(pt1, pt2);
-
-
-
 	// read input data from the standard input
 	int numCircles;
 	std::cin >> numCircles;
