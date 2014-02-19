@@ -131,12 +131,21 @@ Edge * Edge::succ () const
 
 Edge * Edge::formLoop ()
 {
+  std::cout << "formLoop" << endl;
+  int count = 0;
   Edge *e = this, *l = this;
   while (true) {
+    pe(e);
     e->flag = true;
+	std::cout << "OK 1" << endl;
     e = e->twin->next;
+	std::cout << "OK 2" << endl;
+    pe(e);
     if (e->flag)
       break;
+	std::cout << "XOrder:" << endl;
+	std::cout << (XOrder(e->head()->p, l->head()->p) ? 1 : 0) << endl;
+	std::cout << "XOrder OK" << endl;
     if (e->head()->p != l->head()->p &&
 	XOrder(e->head()->p, l->head()->p) == 1)
       l = e;
@@ -287,6 +296,11 @@ bool Event::operator< (Event &e)
   if (type == Swap && e.type == Remove && a->tail == e.a->tail)
 	return false;
 
+  if (type == Swap && e.type == Remove && e.a->bottomOfCircle && b->circle == e.a->circle)
+	return false;
+  if (type == Remove && a->bottomOfCircle && e.type == Swap && a->circle == e.b->circle)
+	return true;
+
   return YOrder(e);
 }
 
@@ -410,7 +424,8 @@ Circle* Arrangement::addCircle (Point* center, Parameter radius)
   Vertex *v3 = addVertex(p3);
   Vertex *v4 = addVertex(p4);
 
-  Circle* circle = new Circle1pt1rad(center, radius);
+  //Circle* circle = new Circle1pt1rad(center, radius);
+  Circle* circle = new Circle3pts(p1, p2, p3);
 
   // initialize the component and its member
   Component* component = new Component();

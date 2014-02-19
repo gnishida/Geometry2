@@ -146,6 +146,7 @@ class Event {
   EventType type;
   Point *p;
   Edge *a, *b;
+  Circle *c;
 };
 
 typedef vector<Event> Events;
