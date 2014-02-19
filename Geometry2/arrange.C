@@ -55,6 +55,8 @@ bool Edge::increasingY ()
 
 bool Edge::clockwise (Edge *e)
 {
+  if (circle == e->circle)
+    return leftOfCircle;
   bool inc = increasingY(), einc = e->increasingY();
   return inc != einc ? inc 
     : LeftTurn(head()->p, tail->p, e->head()->p) == 1;
@@ -131,21 +133,12 @@ Edge * Edge::succ () const
 
 Edge * Edge::formLoop ()
 {
-  std::cout << "formLoop" << endl;
-  int count = 0;
   Edge *e = this, *l = this;
   while (true) {
-    pe(e);
     e->flag = true;
-	std::cout << "OK 1" << endl;
     e = e->twin->next;
-	std::cout << "OK 2" << endl;
-    pe(e);
     if (e->flag)
       break;
-	std::cout << "XOrder:" << endl;
-	std::cout << (XOrder(e->head()->p, l->head()->p) ? 1 : 0) << endl;
-	std::cout << "XOrder OK" << endl;
     if (e->head()->p != l->head()->p &&
 	XOrder(e->head()->p, l->head()->p) == 1)
       l = e;
@@ -160,7 +153,16 @@ Edge * Edge::formLoop ()
 bool Edge::outer ()
 {
   Edge *f = twin->next;
-  if (f != twin && f->head()->p == tail->p) return true;
+
+  if (f != twin && f->head()->p == tail->p) {
+	  if (this->leftOfCircle) {
+		return !this->increasingY();
+	  } else {
+		return this->increasingY();
+	  }
+	  return true;
+  }
+  
   return f != twin && LeftTurn(tail->p, head()->p, f->head()->p) == 1;
 }
 
@@ -171,9 +173,6 @@ bool Edge::withinArc (Point* point) const
 {
   if (leftOfCircle && point->getP().getX() > circle->getO().getX()) return false;
   if (!leftOfCircle && point->getP().getX() < circle->getO().getX()) return false;
-
-  if (bottomOfCircle && point->getP().getY() > circle->getO().getY()) return false;
-  if (!bottomOfCircle && point->getP().getY() < circle->getO().getY()) return false;
 
   return true;
 }
@@ -296,9 +295,9 @@ bool Event::operator< (Event &e)
   if (type == Swap && e.type == Remove && a->tail == e.a->tail)
 	return false;
 
-  if (type == Swap && e.type == Remove && e.a->bottomOfCircle && b->circle == e.a->circle)
+  if (type == Swap && e.type == Remove && b->circle == e.a->circle)
 	return false;
-  if (type == Remove && a->bottomOfCircle && e.type == Swap && a->circle == e.b->circle)
+  if (type == Remove && e.type == Swap && a->circle == e.b->circle)
 	return true;
 
   return YOrder(e);
@@ -362,10 +361,10 @@ Vertex * Arrangement::addVertex (Point *p)
   return v;
 }
 
-Edge * Arrangement::addEdge (Circle *circle, bool leftOfCircle, bool bottomOfCircle, Vertex *tail, Vertex *head, bool aflag, bool flag)
+Edge * Arrangement::addEdge (Circle *circle, bool leftOfCircle, Vertex *tail, Vertex *head, bool aflag, bool flag)
 {
-  Edge *e = addHalfEdge(tail, 0, 0, true, aflag, flag, circle, leftOfCircle, bottomOfCircle),
-    *et = addHalfEdge(head, e, 0, false, aflag, flag, circle, leftOfCircle, bottomOfCircle);
+  Edge *e = addHalfEdge(tail, 0, 0, true, aflag, flag, circle, leftOfCircle);
+  Edge *et = addHalfEdge(head, e, 0, false, aflag, flag, circle, leftOfCircle);
   e->twin = et;
   e->u = new Vector(tail->p, head->p);
   e->twin->u = new Vector(head->p, tail->p);
@@ -375,9 +374,9 @@ Edge * Arrangement::addEdge (Circle *circle, bool leftOfCircle, bool bottomOfCir
 }
 
 Edge * Arrangement::addHalfEdge (Vertex *tail, Edge *twin, Edge *next, bool in,
-				 bool aflag, bool flag, Circle *circle, bool leftOfCircle, bool bottomOfCircle)
+				 bool aflag, bool flag, Circle *circle, bool leftOfCircle)
 {
-  Edge *e = new Edge(tail, twin, next, in, aflag, flag, circle, leftOfCircle, bottomOfCircle);
+  Edge *e = new Edge(tail, twin, next, in, aflag, flag, circle, leftOfCircle);
   edges.push_back(e);
   return e;
 }
@@ -415,17 +414,13 @@ Circle* Arrangement::addCircle (Point* center, Parameter radius)
   PV2 dirX(radius, Parameter((double)0));
   PV2 dirY(Parameter((double)0), radius);
   Point *p1 = new InputPoint(center->getP() + dirY);
-  Point *p2 = new InputPoint(center->getP() - dirX);
-  Point *p3 = new InputPoint(center->getP() - dirY);
-  Point *p4 = new InputPoint(center->getP() + dirX);
+  Point *p2 = new InputPoint(center->getP() - dirY);
 
   Vertex *v1 = addVertex(p1);
   Vertex *v2 = addVertex(p2);
-  Vertex *v3 = addVertex(p3);
-  Vertex *v4 = addVertex(p4);
 
   //Circle* circle = new Circle1pt1rad(center, radius);
-  Circle* circle = new Circle3pts(p1, p2, p3);
+  Circle* circle = new Circle2pts(p1, p2);
 
   // initialize the component and its member
   Component* component = new Component();
@@ -433,10 +428,8 @@ Circle* Arrangement::addCircle (Point* center, Parameter radius)
   circle->component = component;
   components.push_back(component);
 
-  addEdge(circle, true, false, v1, v2);
-  addEdge(circle, true, true, v2, v3);
-  addEdge(circle, false, true, v3, v4);
-  addEdge(circle, false, false, v4, v1);
+  addEdge(circle, true, v1, v2);
+  addEdge(circle, false, v2, v1);
 
   return circle;
 }
@@ -568,10 +561,10 @@ void Arrangement::split (Edge *e, Edge *f, Point *p)
 {
   Vertex *v = addVertex(p);
   Edge *et = e->twin, *ft = f->twin, 
-	*e4 = addHalfEdge(v, et, 0, e->in, e->aflag, e->flag, e->circle, e->leftOfCircle, e->bottomOfCircle),
-    *e3 = addHalfEdge(v, f, e4, ft->in, ft->aflag, ft->flag, f->circle, e->leftOfCircle, e->bottomOfCircle),
-    *e2 = addHalfEdge(v, e, e3, et->in, et->aflag, et->flag, e->circle, e->leftOfCircle, e->bottomOfCircle),
-    *e1 = addHalfEdge(v, ft, e2, f->in, f->aflag, f->flag, f->circle, e->leftOfCircle, e->bottomOfCircle);
+	*e4 = addHalfEdge(v, et, 0, e->in, e->aflag, e->flag, e->circle, e->leftOfCircle),
+    *e3 = addHalfEdge(v, f, e4, ft->in, ft->aflag, ft->flag, f->circle, f->leftOfCircle),
+    *e2 = addHalfEdge(v, e, e3, et->in, et->aflag, et->flag, e->circle, e->leftOfCircle),
+    *e1 = addHalfEdge(v, ft, e2, f->in, f->aflag, f->flag, f->circle, f->leftOfCircle);
   e4->next = e1;
   e->twin = e2;
   et->twin = e4;
@@ -707,7 +700,7 @@ void copyEdge (Edge *e, bool aflag, Vmap &vmap, Arrangement *a)
 {
   Vertex *t = getVertex(e->tail, vmap, a),
     *h = getVertex(e->head(), vmap, a);
-  a->addEdge(e->circle, e->leftOfCircle, e->bottomOfCircle, t, h, aflag);
+  a->addEdge(e->circle, e->leftOfCircle, t, h, aflag);
 }
 
 Vertex * getVertex (Vertex *v, Vmap &vmap, Arrangement *a)

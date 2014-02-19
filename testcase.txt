@@ -4,8 +4,8 @@
 0 0 10 10 10 10
 
 
-Vertices: 10
-Edges: 12
+Vertices: 6
+Edges: 8
 Faces: 4
 Components: 1
 V - E + F = 2
@@ -18,8 +18,8 @@ V - E + F = 2
 
 
 
-Vertices: 18
-Edges: 24
+Vertices: 12
+Edges: 18
 Faces: 8
 Components: 1
 V - E + F = 2
@@ -32,8 +32,8 @@ V - E + F = 2
 
 
 
-Vertices: 16
-Edges: 20
+Vertices: 10
+Edges: 14
 Faces: 6
 Components: 1
 V - E + F = 2
@@ -46,8 +46,8 @@ V - E + F = 2
 
 
 
-Vertices: 24
-Edges: 32
+Vertices: 16
+Edges: 24
 Faces: 10
 Components: 1
 V - E + F = 2
@@ -60,8 +60,8 @@ V - E + F = 2
 
 
 
-Vertices: 8
-Edges: 8
+Vertices: 4
+Edges: 4
 Faces: 3
 Components: 2
 V - E + F = 3
@@ -74,8 +74,8 @@ V - E + F = 3
 
 
 
-Vertices: 12
-Edges: 12
+Vertices: 6
+Edges: 6
 Faces: 4
 Components: 3
 V - E + F = 4
@@ -88,8 +88,8 @@ V - E + F = 4
 
 
 
-Vertices: 22
-Edges: 28
+Vertices: 14
+Edges: 20
 Faces: 8
 Components: 1
 V - E + F = 2

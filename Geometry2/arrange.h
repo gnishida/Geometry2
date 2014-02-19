@@ -31,9 +31,9 @@ class Component;
 
 class Edge {
  public:
-  Edge (Vertex *tail, Edge *twin, Edge *next, bool in, bool aflag, bool flag, Circle *circle, bool leftOfCircle, bool bottomOfCircle)
+  Edge (Vertex *tail, Edge *twin, Edge *next, bool in, bool aflag, bool flag, Circle *circle, bool leftOfCircle)
     : tail(tail), helper(0), twin(twin), next(next), face(0), u(0), node(0), 
-    in(in), aflag(aflag), flag(flag), circle(circle), leftOfCircle(leftOfCircle), bottomOfCircle(bottomOfCircle) {}
+    in(in), aflag(aflag), flag(flag), circle(circle), leftOfCircle(leftOfCircle) {}
   ~Edge () { delete u; }
   Vertex * head () const { return twin->tail; }
   bool incident (Edge *e) const;
@@ -57,7 +57,6 @@ class Edge {
 
   Circle* circle;
   bool leftOfCircle;
-  bool bottomOfCircle;
 };
 
 typedef vector<Edge *> Edges;
@@ -164,10 +163,10 @@ class Arrangement {
   Arrangement (bool rbflag = false) :rbflag(rbflag) {}
   ~Arrangement ();
   Vertex * addVertex (Point *p);
-  Edge * addEdge (Circle *circle, bool leftOfCircle, bool bottomOfCircle, Vertex *tail = 0, Vertex *head = 0, bool aflag = true,
+  Edge * addEdge (Circle *circle, bool leftOfCircle, Vertex *tail = 0, Vertex *head = 0, bool aflag = true,
 		  bool flag = false);
   Edge * addHalfEdge (Vertex *tail, Edge *twin, Edge *next, bool in,
-		      bool aflag, bool flag, Circle *circle, bool leftOfCircle, bool bottomOfCircle);
+		      bool aflag, bool flag, Circle *circle, bool leftOfCircle);
   void removeEdge (Edge *e);
   //void addLoop (const Points &pts);
   Circle* addCircle (Point* center, Parameter radius);
